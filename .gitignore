@@ -1,0 +1,10 @@
+*.dict
+*.pdf
+.idea
+venv
+*.pyc
+.bash_history
+.lesshst
+.sudo_as_admin_successful
+.viminfo
+__pycache__

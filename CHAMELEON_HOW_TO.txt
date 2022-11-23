@@ -1,0 +1,61 @@
+
+docker kill $(docker ps -q)
+docker rm $(docker ps -qa)
+cd jsspp_journal_experiments/run_scripts
+screen
+
+./run_all_simulations_v2.py mongodb://128.171.140.102:443 .. 48 0,1,2 0,1,2,3,4,5,6,7,8 1000 1009
+
+----------------------------------------
+
+HOW TO START MONGO:
+
+For instance, on dirt02:
+
+mkdir <path to db>
+screen
+sudo mongod --dbpath <path to db>  --port 443 --bind_ip 128.171.140.102
+
+------------------------------------------
+
+HOW TO CREATE RESERVATIONS/INSTANCES:
+
+https://chi.tacc.chameleoncloud.org/project/
+
+    - Use Ubuntu18 images!
+
+    - In the console in the browser, add public keys to .ssh/authorized_keys
+        http://isoptera.lcsc.edu/~jamcdonald/public_keys 
+
+------------------------------------------
+
+HOW TO INSTALL EVERYTHING ON A CHAMELEON INSTANCE:
+
+
+sudo apt-get update
+sudo apt-get install -y ca-certificates  curl  gnupg  lsb-release
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
+echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+sudo apt-get update
+sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-compose-plugin
+sudo groupadd docker
+sudo usermod -aG docker $USER
+(log back out and back in so that docker's group takes effect)
+sudo apt install -y python3.8
+sudo update-alternatives --install /usr/bin/python3 python /usr/bin/python3.8  1
+python3 -m pip install --upgrade pip
+python3 -m pip install pymongo      
+git clone https://github.com/wrench-project/jsspp_journal_experiments.git
+cd jsspp_journal_experiments
+sudo docker build -t jsspp_journal ./simulator
+cd run_scripts
+
+Edit the run_all_simulations.py script to comment out what shouldn't run
+Invoke it in a screen with the right command-line arguments
+
+screen
+
+
+
+
+

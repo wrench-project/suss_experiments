@@ -8,7 +8,7 @@ screen
 
 ----------------------------------------
 
-HOW TO START MONGO:
+OW TO START MONGO:
 
 For instance, on dirt02:
 

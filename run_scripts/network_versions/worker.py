@@ -8,7 +8,7 @@ import glob
 from multiprocessing import Pool
 import json
 import os
-from pymongo import MongoClient
+#from pymongo import MongoClient
 
 
 # root_dir = os.path.abspath(sys.argv[2])

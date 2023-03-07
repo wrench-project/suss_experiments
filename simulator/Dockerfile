@@ -58,3 +58,5 @@ RUN touch /home/me/.sudo_as_admin_successful
 
 RUN git clone https://github.com/wrench-project/suss_experiments.git
 
+ENV LD_LIBRARY_PATH=/usr/local/lib
+

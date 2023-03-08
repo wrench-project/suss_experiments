@@ -1,0 +1,32 @@
+ssh into dirt02 (or whatever cordinating server you want)
+[install python and mongo and suss_expiriments master]
+sreeen mongo on any folder and internal port ( mongod -port 2001 --dbpath tmpDB)
+screen run_scripts/network_versions/server.py on public port targeting mongo (sudo ./server.py 443 mongodb://localhost:2001)
+
+from anywhere run dispatch.py with whatever spec you want, targeting the server ()
+
+start workers 
+go to https://chi.tacc.chameleoncloud.org/project/ and sign in 
+ask for reservation with hosts
+start image instances on reservation with keys
+create a floating ip
+bind floating ip to instance
+ssh to cc@ip
+
+run
+
+sudo apt-get update
+sudo apt-get install -y docker.io
+sudo usermod -aG docker $USER
+
+relog
+
+git clone https://github.com/wrench-project/suss_experiments.git
+cd suss_experiments
+sudo docker build -t jsspp_journal ./simulator
+screen
+
+sudo docker run -it --rm jsspp_journal bash
+cd suss_experiments
+./run_scripts/network_versions/worker.py 128.171.140.102:443 `nproc`
+

@@ -47,6 +47,9 @@ def main():
         workflow_configs = [int(x) for x in sys.argv[5].split(",")]
 
         run_ideal = "--run-ideal" in sys.argv
+        
+        no_contention = "--no-contention" in sys.argv
+
 
         run_ideal_multi_adaptation = "--run-ideal-multi-adaptation" in sys.argv
 
@@ -63,6 +66,7 @@ def main():
         sys.stderr.write("Usage: " + sys.argv[0] +
                          " <version> <server url> <path to root directory> "
                          "<platform configuration list> <workflow configuration list> "
+                         "[--no-contention] "
                          "[--run-ideal] "
                          "[--run-ideal-multi-adaptation] "
                          "[--run-noise <start seed> <end seed (inclusive)>] "
@@ -121,6 +125,9 @@ def main():
     base_command += " --simulation_noise_scheme micro-platform "
     base_command += " --speculative_work_fraction 1.0 "
     base_command += " --algorithm_selection_scheme makespan "
+    base_command += " --wrench-mailbox-pool-size 50000"
+    if no_contention:
+        base_command += " --no-contention "
 
     commands_to_run = []
     for platform_config_index in platform_configs:

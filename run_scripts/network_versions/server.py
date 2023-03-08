@@ -161,12 +161,33 @@ def connectionThread(c,addr,mydb):
 				#print("LOCK Releasing ingest lock")
 				ingestLock.release()
 				print("	ready")
+			elif (command=="CLEAR"):
+				print("	clearing cache")
+				cleanCache(time.time())
 			else:
 				print("	unknown command: " + str(rec["cmd"]) + str(rec))
+				
 			c.close()
 dispatchedLock=threading.Lock()
 dispatched = {}
 dbLock=threading.Lock()
+def cleanCache(lastCleanup):
+#print("LOCK 185 todo acquire")
+	todoLock.acquire()
+	#print("LOCK 187 ds acquire")
+	dispatchedLock.acquire()
+	
+	
+	for key in dispatched:
+		if (dispatched[key]["time"] < lastCleanup):
+			todo.append(dispatched[key]["request"])
+			dispatched.pop(data)
+	#print("LOCK 192 ds release")
+	dispatchedLock.release()
+	#print("LOCK 194 todo release")
+	todoLock.release()
+	
+	lastCleanup = time.time()
 def main(port, database):
 	lastCleanup = time.time()
 	# server=arg1.split(":")
@@ -192,22 +213,7 @@ def main(port, database):
 		# print(e)
 		
 		if lastCleanup - time.time() > 86400:
-			#print("LOCK 185 todo acquire")
-			todoLock.acquire()
-			#print("LOCK 187 ds acquire")
-			dispatchedLock.acquire()
-			
-			
-			for key in dispatched:
-				if (dispatched[key]["time"] < lastCleanup):
-					todo.append(dispatched[key]["request"])
-					dispatched.pop(data)
-			#print("LOCK 192 ds release")
-			dispatchedLock.release()
-			#print("LOCK 194 todo release")
-			todoLock.release()
-			
-		lastCleanup = time.time()
+			cleanCache(lastCleanup)
 	mongo_client.close()
 
 

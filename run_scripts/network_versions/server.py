@@ -192,7 +192,7 @@ def cleanCache(lastCleanup):
 	todoLock.release()
 	
 	lastCleanup = time.time()
-	print(  "  cache cleaned at "+str(lastCleanup)
+	print(  "  cache cleaned at "+str(lastCleanup))
 def main(port, database):
 	lastCleanup = time.time()
 	# server=arg1.split(":")

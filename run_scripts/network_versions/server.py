@@ -36,37 +36,32 @@ def nextAST(s):
 def readyNext(mydb, remove=True):
 	ret = None
 	#print("LOCK 38 db acquire")		
-	dbLock.acquire()	
+	with dbLock:
 	#print("LOCK 40 todo acquire")
-	todoLock.acquire()
-	
-	while True:
-		if (len(todo) == 0):
-			break
-		next = todo[0]
-		cmd = next[0]
-		db = next[1]
-		print_json_command_to_run = cmd + " --print_JSON " + " 2> /dev/null"
-		# print(print_json_command_to_run)
-		json_output = subprocess.check_output(print_json_command_to_run, shell=True)
-		config = json.loads(json_output)
-		collection = mydb["results_" + db]
+		with todoLock:
+			while True:
+				if (len(todo) == 0):
+					break
+				next = todo[0]
+				cmd = next[0]
+				db = next[1]
+				print_json_command_to_run = cmd + " --print_JSON " + " 2> /dev/null"
+				# print(print_json_command_to_run)
+				json_output = subprocess.check_output(print_json_command_to_run, shell=True)
+				config = json.loads(json_output)
+				collection = mydb["results_" + db]
 
-		if collection.find_one(config):
-			todo.remove(todo[0])
-		# sys.stderr.write(".")
-		# sys.stderr.flush()
-		else:
-			ret = next
-			if(remove):
-				todo.remove(next)
-			break
-	#print("LOCK 62 db release")
-	dbLock.release()	
-	#print("LOCK 64 todo release")	
-	todoLock.release()
-	
+				if collection.find_one(config):
+					todo.remove(todo[0])
+				# sys.stderr.write(".")
+				# sys.stderr.flush()
+				else:
+					ret = next
+					if(remove):
+						todo.remove(next)
+					break
 	return ret
+	
 ingestLock=threading.Lock()
 def connectionThread(c,addr,mydb):
 			print('Got connection from', addr)
@@ -89,56 +84,53 @@ def connectionThread(c,addr,mydb):
 					print("	" + str(addr) + " Requested Task")
 					next = readyNext(mydb)
 					#print("LOCK 83 todo acquire")
-					todoLock.acquire()
-					
-					if next:
-						print("	Sending task")
-						c.send(str(next[0]).encode('utf-8'))
-						ack = c.recv(1024)
-						print(ack)
-						if (ack == "ACK".encode('utf-8')):
-							print("	Acknowledged")
-							#print("LOCK 94 ds acquire")
-							dispatchedLock.acquire()
-							
-							dispatched[next[0]] = {"time": time.time(), "request": todo[0], "db": next[1]}
-							#print("LOCK 98 ds release")
-							dispatchedLock.release()
-							
+					with todoLock:
+						
+						if next:
+							print("	Sending task")
+							c.send(str(next[0]).encode('utf-8'))
+							ack = c.recv(1024)
+							print(ack)
+							if (ack == "ACK".encode('utf-8')):
+								print("	Acknowledged")
+								#print("LOCK 94 ds acquire")
+								with dispatchedLock:
+								
+									dispatched[next[0]] = {"time": time.time(), "request": todo[0], "db": next[1]}
+									#print("LOCK 98 ds release")
+									
+								
+							else:
+								print("	Not Acknowledged")
+								todo.append(next)
 						else:
-							print("	Not Acknowledged")
-							todo.append(next)
-					else:
-						print("	Nothing to do")
-						c.send("NONE".encode('utf-8'))
-						ack = c.recv(1024)
-					#print("LOCK 108 todo release")
-					todoLock.release()
+							print("	Nothing to do")
+							c.send("NONE".encode('utf-8'))
+							ack = c.recv(1024)
+						#print("LOCK 108 todo release")
+
 			elif (command == "RET"):
 				print("	Receiving result")
 				data = rec["data"]
 				c.send("ACK".encode('utf-8'))
 				# add result to database
 				#print("LOCK 115 db acquire")
-				dbLock.acquire()
-				try:
-					#print("LOCK 123 ds acquire")
-					dispatchedLock.acquire()
-					collection = mydb["results_" + dispatched[data["runcommand"]]["db"]]
-					result = data["result"]
-					collection.insert_one(result)
-				# print(data)
-					
-					
-					dispatched.pop(data["runcommand"])
-				except KeyError:
-					pass
-				finally:
-					#print("LOCK 130 ds release")
-					dispatchedLock.release()
-					
-				#print("LOCK 133 db release")	
-				dbLock.release()
+				with dbLock:
+					try:
+						#print("LOCK 123 ds acquire")
+						with dispatchedLock
+							collection = mydb["results_" + dispatched[data["runcommand"]]["db"]]
+							result = data["result"]
+							collection.insert_one(result)
+						# print(data)
+							
+							
+							dispatched.pop(data["runcommand"])
+					except KeyError:
+						pass
+						
+					#print("LOCK 133 db release")	
+				
 				
 			elif (command == "ADD"):
 				data = rec["data"]
@@ -146,22 +138,22 @@ def connectionThread(c,addr,mydb):
 				#print("LOCK 139 todo aquire")
 				
 				#print("LOCK Locking Injest lock")
-				ingestLock.acquire()
-				print(" potential deadlock ",end='')
-				todoLock.acquire()
-				print(" cleared")
+				with ingestLock:
+					print("  potential deadlock ",end='')
+					sys.stdout.flush()
+					with todoLock:
+						print("cleared")
+						
+						for d in data:
+							# print("adding "+str(d))
+							todo.append(d)
+						#print("LOCK 145 todo release")
+					print("	Added " + str(len(data)) + " tasks")
+					c.send("ACK".encode('utf-8'))
+					print("	ingesting...")
+					readyNext(mydb,False)
+					#print("LOCK Releasing ingest lock")
 				
-				for d in data:
-					# print("adding "+str(d))
-					todo.append(d)
-				#print("LOCK 145 todo release")
-				todoLock.release()
-				print("	Added " + str(len(data)) + " tasks")
-				c.send("ACK".encode('utf-8'))
-				print("	ingesting...")
-				readyNext(mydb,False)
-				#print("LOCK Releasing ingest lock")
-				ingestLock.release()
 				print("	ready")
 			elif (command=="CLEAR"):
 				print("	clearing cache")
@@ -175,21 +167,19 @@ dispatched = {}
 dbLock=threading.Lock()
 def cleanCache(lastCleanup):
 #print("LOCK 185 todo acquire")
-	todoLock.acquire()
-	#print("LOCK 187 ds acquire")
-	print(" potential deadlock ",end='')
-	dispatchedLock.acquire()
-	
-	print(" cleared")
-	
-	for key in dispatched:
-		if (dispatched[key]["time"] < lastCleanup):
-			todo.append(dispatched[key]["request"])
-			dispatched.pop(data)
-	#print("LOCK 192 ds release")
-	dispatchedLock.release()
-	#print("LOCK 194 todo release")
-	todoLock.release()
+	with todoLock:
+		#print("LOCK 187 ds acquire")
+		print("  potential deadlock ",end='')
+		with dispatchedLock:
+		
+			print("cleared")
+			
+			for key in dispatched:
+				if (dispatched[key]["time"] < lastCleanup):
+					todo.append(dispatched[key]["request"])
+					dispatched.pop(data)
+			#print("LOCK 192 ds release")
+		#print("LOCK 194 todo release")
 	
 	lastCleanup = time.time()
 	print(  "  cache cleaned at "+str(lastCleanup))

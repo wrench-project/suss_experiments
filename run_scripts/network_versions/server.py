@@ -147,7 +147,9 @@ def connectionThread(c,addr,mydb):
 				
 				#print("LOCK Locking Injest lock")
 				ingestLock.acquire()
+				print(" potential deadlock ",end='')
 				todoLock.acquire()
+				print(" cleared")
 				
 				for d in data:
 					# print("adding "+str(d))
@@ -175,8 +177,10 @@ def cleanCache(lastCleanup):
 #print("LOCK 185 todo acquire")
 	todoLock.acquire()
 	#print("LOCK 187 ds acquire")
+	print(" potential deadlock ",end='')
 	dispatchedLock.acquire()
 	
+	print(" cleared")
 	
 	for key in dispatched:
 		if (dispatched[key]["time"] < lastCleanup):
@@ -188,6 +192,7 @@ def cleanCache(lastCleanup):
 	todoLock.release()
 	
 	lastCleanup = time.time()
+	print(  "  cache cleaned at "+str(lastCleanup)
 def main(port, database):
 	lastCleanup = time.time()
 	# server=arg1.split(":")

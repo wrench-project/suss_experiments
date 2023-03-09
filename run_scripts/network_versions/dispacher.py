@@ -126,6 +126,8 @@ def main():
     base_command += " --speculative_work_fraction 1.0 "
     base_command += " --algorithm_selection_scheme makespan "
     base_command += " --wrench-mailbox-pool-size=50000"
+    base_command += " --cfg=maxmin/precision:0.001"
+
     if no_contention:
         base_command += " --no-contention "
 

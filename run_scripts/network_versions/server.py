@@ -54,17 +54,18 @@ def readyNext(mydb, remove=True):
 
 					if collection.find_one(config):
 						todo.remove(todo[0])
+				
+					# sys.stderr.write(".")
+					# sys.stderr.flush()
+					else:
+						ret = next
+						if(remove):
+							todo.remove(next)
+						break
 				except:
-					print('Error when processing command "'+print_json_command_to_run+'"', file=sys.stderr)
+					print('Error when processing command "'+print_json_command_to_run+'"\n', file=sys.stderr)
 					
 					traceback.print_exc()
-				# sys.stderr.write(".")
-				# sys.stderr.flush()
-				else:
-					ret = next
-					if(remove):
-						todo.remove(next)
-					break
 	return ret
 	
 ingestLock=threading.Lock()

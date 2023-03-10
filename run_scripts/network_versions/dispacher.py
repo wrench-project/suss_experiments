@@ -49,6 +49,7 @@ def main():
         run_ideal = "--run-ideal" in sys.argv
         
         no_contention = "--no-contention" in sys.argv
+        no_contention_in_speculative_executions = "--no-contention-in-speculative-executions" in sys.argv
 
 
         run_ideal_multi_adaptation = "--run-ideal-multi-adaptation" in sys.argv
@@ -67,6 +68,7 @@ def main():
                          " <version> <server url> <path to root directory> "
                          "<platform configuration list> <workflow configuration list> "
                          "[--no-contention] "
+                         "[--no_contention_in_speculative_executions]"
                          "[--run-ideal] "
                          "[--run-ideal-multi-adaptation] "
                          "[--run-noise <start seed> <end seed (inclusive)>] "
@@ -130,6 +132,9 @@ def main():
 
     if no_contention:
         base_command += " --no-contention "
+        
+    if no_contention_in_speculative_executions:
+        base_command += " --no-contention-in-speculative-executions "
 
     commands_to_run = []
     for platform_config_index in platform_configs:

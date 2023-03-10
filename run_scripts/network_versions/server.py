@@ -57,7 +57,7 @@ def readyNext(mydb, remove=True):
 				except:
 					print('Error when processing command "'+print_json_command_to_run+'"', file=sys.stderr)
 					
-    				traceback.print_exc()
+					traceback.print_exc()
 				# sys.stderr.write(".")
 				# sys.stderr.flush()
 				else:

@@ -13,7 +13,7 @@ import os
 from pymongo import MongoClient
 todoLock=threading.Lock()
 todo = []
-
+import traceback
 
 def nextAST(s):
 	data = ""
@@ -46,13 +46,18 @@ def readyNext(mydb, remove=True):
 				cmd = next[0]
 				db = next[1]
 				print_json_command_to_run = cmd + " --print_JSON " + " 2> /dev/null"
-				# print(print_json_command_to_run)
-				json_output = subprocess.check_output(print_json_command_to_run, shell=True)
-				config = json.loads(json_output)
-				collection = mydb["results_" + db]
+				try:
+					# print(print_json_command_to_run)
+					json_output = subprocess.check_output(print_json_command_to_run, shell=True)
+					config = json.loads(json_output)
+					collection = mydb["results_" + db]
 
-				if collection.find_one(config):
-					todo.remove(todo[0])
+					if collection.find_one(config):
+						todo.remove(todo[0])
+				except:
+					print('Error when processing command "'+print_json_command_to_run+'"', file=sys.stderr)
+					
+    				traceback.print_exc()
 				# sys.stderr.write(".")
 				# sys.stderr.flush()
 				else:

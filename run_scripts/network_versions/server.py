@@ -118,7 +118,7 @@ def connectionThread(c,addr,mydb):
 				with dbLock:
 					try:
 						#print("LOCK 123 ds acquire")
-						with dispatchedLock
+						with dispatchedLock:
 							collection = mydb["results_" + dispatched[data["runcommand"]]["db"]]
 							result = data["result"]
 							collection.insert_one(result)

@@ -14,7 +14,7 @@ from pymongo import MongoClient
 todoLock=threading.Lock()
 todo = []
 import traceback
-from datetime import datetime
+from datetime import datetime, date
 
 def nextAST(s):
 	data = ""
@@ -71,7 +71,7 @@ def readyNext(mydb, remove=True):
 	
 ingestLock=threading.Lock()
 def connectionThread(c,addr,mydb):
-	print("[", datetime.now().strftime("%H:%M:%S"),']', end=' ')
+	print("[",date.today(), datetime.now().strftime("%H:%M:%S"),']', end=' ')
 	try:
 			print('Got connection from', addr)
 			rec = nextAST(c)

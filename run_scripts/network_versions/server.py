@@ -70,6 +70,7 @@ def readyNext(mydb, remove=True):
 	
 ingestLock=threading.Lock()
 def connectionThread(c,addr,mydb):
+	try:
 			print('Got connection from', addr)
 			rec = nextAST(c)
 			if not rec:
@@ -166,7 +167,7 @@ def connectionThread(c,addr,mydb):
 				cleanCache(time.time())
 			else:
 				print("	unknown command: " + str(rec["cmd"]) + str(rec))
-				
+	finally:			
 			c.close()
 dispatchedLock=threading.Lock()
 dispatched = {}

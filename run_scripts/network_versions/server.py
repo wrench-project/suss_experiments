@@ -210,8 +210,10 @@ def main(port, database):
 			try:
 				threading.Thread(target=connectionThread, args=(c,addr,mydb)).start()
 			finally:
-				c.close();
-
+				try:
+					c.close();
+				except:
+					pass
 		except socket.timeout:
 			pass
 		

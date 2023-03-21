@@ -154,7 +154,7 @@ def connectionThread(c,addr,mydb):
 					with todoLock:
 						print("cleared")
 						
-						for d in data:
+						for d in sorted(data,key=lambda _: random.random()):
 							# print("adding "+str(d))
 							todo.append(d)
 						#print("LOCK 145 todo release")

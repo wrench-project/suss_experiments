@@ -30,7 +30,8 @@ def nextAST(s):
 				return ret
 			except:
 				pass
-	except:
+	except Exception as e: 
+		print(e)
 		return None
 
 

@@ -210,7 +210,7 @@ def main(port, database):
 			c, addr = s.accept()
 			try:
 				threading.Thread(target=connectionThread, args=(c,addr,mydb)).start()
-			finally:
+			except:
 				try:
 					c.close();
 				except:

@@ -212,6 +212,8 @@ def main(port, database):
 
 		except socket.timeout:
 			pass
+		finally:
+			c.close();
 		# except Exception as e:
 		# print("Error with client ")
 		# print(e)

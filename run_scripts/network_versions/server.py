@@ -207,11 +207,12 @@ def main(port, database):
 
 			# print("Waiting for collection")
 			c, addr = s.accept()
-			threading.Thread(target=connectionThread, args=(c,addr,mydb)).start()
 	
 
 		except socket.timeout:
 			pass
+		try:
+			threading.Thread(target=connectionThread, args=(c,addr,mydb)).start()
 		finally:
 			c.close();
 		# except Exception as e:

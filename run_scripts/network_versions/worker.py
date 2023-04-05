@@ -13,7 +13,6 @@ import os
 
 # root_dir = os.path.abspath(sys.argv[2])
 
-
 def run_simulation(arg, docker_prefix):
     command_to_run = arg
 
@@ -41,7 +40,7 @@ def main(arg1):
             # s.settimeout(None)
             s.connect((server[0], int(server[1])))
             s.send(str({"cmd": "IDLE", "data": ""}).encode('utf-8'))
-            data = s.recv(1024).decode('utf-8')
+            data = s.recv(1024*1024).decode('utf-8')
             s.send("ACK".encode('utf-8'))
             s.close()
         except Exception as e:

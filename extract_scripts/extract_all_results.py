@@ -69,7 +69,7 @@ def main():
 		for cluster in clusters:
 			results[workflow][cluster] = {}
 
-			cursor = collection.find({"clusters": cluster, "workflow": workflow,"no_contention":False})
+			cursor = collection.find({"clusters": cluster, "workflow": workflow,"no_contention":False,"no_contention_in_speculative_executions":False})
 			us_makespans = []
 			for doc in cursor:
 				# print(doc)
@@ -95,7 +95,7 @@ def main():
 		for cluster in clusters:
 			results[workflow][cluster] = {}
 
-			cursor = collection.find({"clusters": cluster, "workflow": workflow,"no_contention":False})
+			cursor = collection.find({"clusters": cluster, "workflow": workflow,"no_contention":False,"no_contention_in_speculative_executions":False})
 			us_makespans = []
 			for doc in cursor:
 				if doc["simulation_noise"] > 0.0:
@@ -137,7 +137,7 @@ def main():
 					# print("	  PLATFORMS: "+cluster)
 					results[noise][target_noise][workflow][cluster] = {}
 
-					cursor = collection.find({"clusters": cluster, "workflow": workflow,"no_contention":False})
+					cursor = collection.find({"clusters": cluster, "workflow": workflow,"no_contention":False,"no_contention_in_speculative_executions":False})
 					us_makespans = []
 					for doc in cursor:
 						if (noise_reduction == 0.0) and (doc["disable_adaptation_if_noise_has_not_changed"] == False):
@@ -182,7 +182,7 @@ def main():
 					# print("	  PLATFORMS: "+cluster)
 					results[noise][target_noise][workflow][cluster] = {}
 
-					cursor = collection.find({"clusters": cluster, "workflow": workflow,"no_contention":False})
+					cursor = collection.find({"clusters": cluster, "workflow": workflow,"no_contention":False,"no_contention_in_speculative_executions":False})
 					us_makespans = []
 					for doc in cursor:
 						if noise_reduction == 0.0:
@@ -227,6 +227,50 @@ def main():
 			
 
 	write_results_to_file("no_contention_ideal_extracted_results_"+version+".dict", results)
+	
+	# CONTENTION NOISE RESULTS
+	############################################
+	sys.stderr.write("Extracting 'contention noise' results...\n")
+	results = {}
 
+	for noise in noises:
+		print("NOISE: " + str(noise))
+		results[noise] = {}
+
+		for noise_reduction in noise_reductions:
+
+			if noise_reduction > noise:
+				continue
+
+			target_noise = (int(10 * noise) - int(10 * noise_reduction)) / 10
+			results[noise][target_noise] = {}
+
+			for workflow in workflows:
+				# print("	WORKFLOW: " + workflow)
+				results[noise][target_noise][workflow] = {}
+
+				for cluster in clusters:
+					# print("	  PLATFORMS: "+cluster)
+					results[noise][target_noise][workflow][cluster] = {}
+
+					cursor = collection.find({"clusters": cluster, "workflow": workflow,"no_contention":False,"no_contention_in_speculative_executions":True})
+					us_makespans = []
+					for doc in cursor:
+						if (noise_reduction == 0.0) and (doc["disable_adaptation_if_noise_has_not_changed"] == False):
+							continue
+						is_us = (len(doc["task_selection_schemes"].split(",")) > 1) or (
+								len(doc["cluster_selection_schemes"].split(",")) > 1) or (
+										len(doc["core_selection_schemes"].split(",")) > 1)
+						if not is_us:
+							alg_name = doc["task_selection_schemes"] + "/" + doc["cluster_selection_schemes"] + "/" + \
+									   doc["core_selection_schemes"]
+							results[noise][target_noise][workflow][cluster][alg_name] = doc["makespan"]
+						else:
+							if (doc["simulation_noise"] == noise) and (
+									doc["simulation_noise_reduction"] == noise_reduction):
+								us_makespans.append(doc["makespan"])
+					results[noise][target_noise][workflow][cluster]["us"] = us_makespans
+
+	write_results_to_file("no_contention_noise_extracted_results_"+version+".dict", results)
 if __name__ == "__main__":
 	main()

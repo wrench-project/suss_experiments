@@ -25,10 +25,11 @@ def main():
     generate_basic_algorithms_plot(plot_path, result_dicts["basic_algorithms"], best_algorithm_on_average)
 
     # Compute multi-adaptation statistics
-    sys.stdout.write("\n# ZERO-ERROR, MULTI-ADAPTATION STATISTICS\n")
-    sys.stdout.write("#########################################\n")
-    compute_multi_adaptation_statistics(result_dicts["multi_adaptation"])
-
+    #sys.stdout.write("\n# ZERO-ERROR, MULTI-ADAPTATION STATISTICS\n")
+    #sys.stdout.write("#########################################\n")
+    #compute_multi_adaptation_statistics(result_dicts["multi_adaptation"])
+	# broken by current data
+	
     # Generate the noise violin plots for all cases
     sys.stdout.write("\n# ERROR PLOTS\n")
     sys.stdout.write("#############\n")
@@ -70,12 +71,18 @@ def main():
     start_noises = [0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0]
     plot_cumulative_rank_histograms(plot_path, result_dicts, start_noises)
 
-    # Rank histogram plot
-    sys.stdout.write("\n# RANK HISTOGRAM PLOTS\n")
+    # no Contention ideal
+    sys.stdout.write("\n# NO CONTENTION (IDEAL) PLOTS\n")
     sys.stdout.write("########################\n")
     start_noises = [0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0]
     
-    plot_no_contention(plot_path, result_dicts, start_noises)
+    plot_no_contention_ideal(plot_path, result_dicts, best_algorithm_on_average)
+    
+    # no Contention noise
+    sys.stdout.write("\n# NO CONTENTION (NOISE) PLOTS\n")
+    sys.stdout.write("########################\n")
+    start_noises = [0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0]
+    plot_no_contention_noise(plot_path, result_dicts, best_algorithm_on_average)
     
 # MAIN
 if __name__ == "__main__":

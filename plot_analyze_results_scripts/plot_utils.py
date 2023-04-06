@@ -155,7 +155,8 @@ def importData(version, verbosity=2):
                        "multi_adaptation": "../extract_scripts/multi_adaptation_results_" + version + ".dict",
                        "noise": "../extract_scripts/noise_extracted_results_" + version + ".dict",
                        "noise_mitigation": "../extract_scripts/noise_mitigation_extracted_results_" + version + ".dict",
-                       "no_contention": "../extract_scripts/no_contention_ideal_extracted_results_"+version+".dict"}
+                       "no_contention": "../extract_scripts/no_contention_ideal_extracted_results_"+version+".dict",
+                       "no_contention_noise": "../extract_scripts/no_contention_noise_extracted_results_"+version+".dict"}
     result_dicts = {}
     for f in extracted_files:
         try:

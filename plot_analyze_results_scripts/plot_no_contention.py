@@ -101,78 +101,8 @@ def plot_no_contention_noise(plot_path, results_dict, best_algorithm_on_average,
 			finalErrors[workflow]["noise"][i]=	errors[workflow][key]["noise"]
 			finalAverages[workflow]["noContention"][i]=averages[workflow][key]["noContention"]
 			finalErrors[workflow]["noContention"][i]=	errors[workflow][key]["noContention"]
-	for workflow in finalAverages:
-		print(workflow)
-		for sub in finalAverages[workflow]:
-			print("\t",sub,finalAverages[workflow][sub])
-			
-	for workflow in finalAverages:
-		print(workflow)
-		for sub in finalAverages[workflow]:
-			print("\t",sub,finalErrors[workflow][sub])
-def _plot_no_mitigation(plot_path, results_dict, best_algorithm_on_average):
-	# (Re) Compute the dfb of the best_algorithm_on_average
-	noNoise = results_dict["basic_algorithms"]
-	best_algorithm_on_average_ave_dfb = 0
-	best_algorithm_on_average_ave_dfb_count = 0
-
-	for workflow in noNoise:
-		for platform in noNoise[workflow]:
-			algs = noNoise[workflow][platform]
-			best = min(algs.values())
-			best_algorithm_on_average_ave_dfb += dgfb(best, noNoise[workflow][platform][best_algorithm_on_average])
-			best_algorithm_on_average_ave_dfb_count += 1
-
-	best_algorithm_on_average_ave_dfb /= best_algorithm_on_average_ave_dfb_count
-
-	# Compute our dfb for all noises
-	averages = []
-	flats = {}
-	maxima = []
-	minima = []
-	errors = []
-	for base_noise in results_dict["noise"]:
-		if base_noise == 0.0:
-			continue
-		# todo rework for point distributions
-		transMap = {}
-
-		noReduction = results_dict["noise"][base_noise][base_noise]
-
-		for workflow in noNoise:
-			for platform in noNoise[workflow]:
-				workform = "W" + str(workflow_index_map[workflow]) + ":P" + str(cluster_index_map[platform])
-				# print(workform)
-				try:
-					# print(noise)
-					# print(noNoise[workflow][platform])
-					algs = noNoise[workflow][platform]
-
-					safeRemove(algs, "us")
-					best = min(algs.values())
-
-					transMap[workform] = []
-					points = noReduction[workflow][platform]["us"].copy()
-					for i in range(len(points)):
-						points[i] = dgfb(best, points[i])
-					# print(points)
-					transMap[workform] = points
-				except KeyError:
-					break
-				except ZeroDivisionError:
-					break
-
-		flats[base_noise] = []
-		for workform in transMap:
-			for point in transMap[workform]:
-				flats[base_noise].append(point)
-		std_error = np.std(flats[base_noise], ddof=1) / np.sqrt(len(flats[base_noise]))
-		average = sum(flats[base_noise]) / len(flats[base_noise])
-		averages.append(average)
-		maxima.append(max(flats[base_noise]))
-		minima.append(min(flats[base_noise]))
-		errors.append(std_error)
-
+	averages=finalAverages
+	errors=finalErrors
 	fontsize = 18
 	f, ax1 = plt.subplots(1, 1, sharey=True, figsize=(12, 6))
 	ax1.yaxis.grid()
@@ -180,8 +110,8 @@ def _plot_no_mitigation(plot_path, results_dict, best_algorithm_on_average):
 
 	handles = []
 	x_value = 0.1
-	x_ticks = range(0, 10)
-	x_ticklabels = [.1, .2, .3, .4, .5, .6, .7, .8, .9, 1.0]
+	x_ticks = range(0, 11)
+	x_ticklabels = [0,.1, .2, .3, .4, .5, .6, .7, .8, .9, 1.0]
 
 	ax1.set_xticks(x_ticks)
 	ax1.set_xticklabels(x_ticklabels, rotation=45, fontsize=fontsize - 2)
@@ -189,30 +119,37 @@ def _plot_no_mitigation(plot_path, results_dict, best_algorithm_on_average):
 	ax1.set_ylabel("% degradation from best (dfb)", fontsize=fontsize)
 	ax1.set_xlabel("Simulation error magnitude ($e$)", fontsize=fontsize)
 	ax1.invert_xaxis()
-	ax1.plot([x_ticks[0]-0.5, x_ticks[-1]+0.5], [best_algorithm_on_average_ave_dfb, best_algorithm_on_average_ave_dfb], 'r-')
-	ax1.plot(range(0, len(averages)), averages, 'b-', linewidth=2)
+	#ax1.plot([x_ticks[0]-0.5, x_ticks[-1]+0.5], [best_algorithm_on_average_ave_dfb, best_algorithm_on_average_ave_dfb], 'r-')
+	
 
 	pos = x_ticks[0]
-	for base_noise in flats:
-		plot_violin(ax1, pos, 0.6, flats[base_noise], "yellow", 0.5)
-		percentage_above = 100.0 * len([x for x in flats[base_noise] if x > best_algorithm_on_average_ave_dfb]) / len(flats[base_noise])
-		plt.text(pos -0.05, best_algorithm_on_average_ave_dfb + 0.3, "{:.2f}".format(round(percentage_above, 2)) + "%", fontsize=fontsize-3)
-		plt.text(pos -0.05, best_algorithm_on_average_ave_dfb - 0.9, "{:.2f}".format(round(100 - percentage_above, 2)) + "%", fontsize=fontsize-3)
-		pos += 1
-
-	#	ax1.errorbar(range(0, len(averages)), averages, yerr=errors, capsize=10)
+	colors={}
+	n=0
+	
+	cmap=plt.cm.get_cmap("hsv", len(averages)*2)#I want this to generalize to n plots, but if n=2, I want blue and red
+	for workflow in averages:
+		colors[workflow]=cmap(n)
+		n+=2
+	for workflow in averages:
+			ax1.errorbar(range(0, len(averages[workflow]["noise"])), averages[workflow]["noise"], yerr=errors[workflow]["noise"], capsize=5,color=colors[workflow], label=workflow.split("-")[0]+" with contention",ecolor='black')
+			#ax1.plot(range(0, len(averages[workflow]["noise"])), averages[workflow]["noise"], 'b-', linewidth=2,color=colors[workflow], label=workflow.split("-")[0])
+			
+			ax1.errorbar(range(0, len(averages[workflow]["noContention"])), averages[workflow]["noContention"], yerr=errors[workflow]["noContention"], capsize=5,color=colors[workflow], linestyle='dashed', label=workflow.split("-")[0]+" without contention")
+			#ax1.plot(range(0, len(averages[workflow]["noContention"])), averages[workflow]["noContention"], 'b-', linewidth=2,color=colors[workflow], linestyle='dashed')
+	plt.legend()		
 	# Create the figure
 
-	plt.ylim([0,20])
+	plt.ylim([0,70])
 
 	plt.yticks(fontsize=fontsize)
 	f.tight_layout()
 
-	output_filename = plot_path + "dfb_vs_error_full.pdf"
+	output_filename = plot_path + "no_contention_noise.pdf"
 	plt.savefig(output_filename)
 	plt.close()
 	sys.stdout.write("Generated plot '" + output_filename + "'\n")
 	
+
 if __name__ == "__main__":
 	if len(sys.argv) != 2:
 		sys.stderr.write("Usage: " + sys.argv[0] + " <version>\n")

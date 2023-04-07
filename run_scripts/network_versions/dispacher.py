@@ -242,12 +242,13 @@ def main():
 	# REMOVE DUPLICATES
 	xps = sorted(list(set(commands_to_run)))
 
+	print(str({"cmd": "ADD", "data": xps}).replace("\\","/"))
 	sys.stderr.write("Dispaching (up to) " + str(len(xps)) + " experiments\n")
+	
 	s = socket.socket()
 
 	s.connect((server[0], int(server[1])))
 	s.send(str({"cmd": "ADD", "data": xps}).replace("\\","/").encode('utf-8'))
-	print(str({"cmd": "ADD", "data": xps}).replace("\\","/"))
 	s.close()
 
 

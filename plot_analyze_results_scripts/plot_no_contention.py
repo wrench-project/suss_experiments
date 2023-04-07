@@ -36,9 +36,11 @@ def plot_no_contention_noise(plot_path, results_dict, best_algorithm_on_average,
 			if not workflow in noReduction or not workflow in noContention:
 				continue
 			for platform in noNoise[workflow]:
+				if len(platform)<80:#p3 only
+					continue
 				if not platform in noReduction[workflow] or not platform in noContention[workflow]:
 					continue
-				# print(workform)
+				#print(platform)
 				try:
 					# print(noise)
 					# print(noNoise[workflow][platform])
@@ -139,7 +141,7 @@ def plot_no_contention_noise(plot_path, results_dict, best_algorithm_on_average,
 	plt.legend()		
 	# Create the figure
 
-	plt.ylim([0,70])
+	plt.ylim([0,100])
 
 	plt.yticks(fontsize=fontsize)
 	f.tight_layout()

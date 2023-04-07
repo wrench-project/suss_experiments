@@ -118,7 +118,7 @@ def connectionThread(c,addr,mydb):
 							c.send("NONE".encode('utf-8'))
 							ack = c.recv(1024)
 						#print("LOCK 108 todo release")
-
+					readyNext(mydb,False)
 			elif (command == "RET"):
 				print("	Receiving result")
 				data = rec["data"]
@@ -168,6 +168,10 @@ def connectionThread(c,addr,mydb):
 			elif (command=="CLEAR"):
 				print("	clearing cache")
 				cleanCache(time.time())
+			elif (command=="PURGE"):
+				print("	purging todo")
+				with todoLock:
+					todo=[]
 			else:
 				print("	unknown command: " + str(rec["cmd"]) + str(rec))
 	finally:			

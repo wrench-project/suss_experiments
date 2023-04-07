@@ -72,6 +72,7 @@ def readyNext(mydb, remove=True):
 	
 ingestLock=threading.Lock()
 def connectionThread(c,addr,mydb):
+	global todo
 	print("[",date.today(), datetime.now().strftime("%H:%M:%S"),']', end=' ')
 	try:
 			print('Got connection from', addr)

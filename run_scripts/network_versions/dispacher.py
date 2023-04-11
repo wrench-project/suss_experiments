@@ -29,8 +29,7 @@ def test(mongo,commands,version):
 		count+=1
 		if((count<1000 and count % 100==0) or count % 1000==0):
 			print(count)
-		print(command)
-		print_json_command_to_run = command + " --print_JSON " + " 2> /dev/null"
+		print_json_command_to_run = command[0] + " --print_JSON " + " 2> /dev/null"
 		try:
 			# print(print_json_command_to_run)
 			json_output = subprocess.check_output(print_json_command_to_run, shell=True)

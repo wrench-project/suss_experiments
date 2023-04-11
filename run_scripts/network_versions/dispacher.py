@@ -288,8 +288,6 @@ def main():
 	n=len(xps)/float(nprocs)
 	if validate:
 		xps=test(mongoURL,xps,version)
-	for i in range(nproc):
-        os.wait()		
 	print(str({"cmd": "ADD", "data": xps}).replace("\\","/"))
 	if pause_for_confirm:
 		input("Waiting to dispach " + str(len(xps)) + " experiments to "+str(server[0])+":"+str(server[1])+" Please confirm.\n"

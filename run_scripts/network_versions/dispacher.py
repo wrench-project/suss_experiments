@@ -25,6 +25,7 @@ def test(mongo,commands,version):
 	collection = mydb["results_" + version]
 	ret=[]
 	count=0
+	print("Testing "+len(commands)+" potential commands")
 	for command in commands:
 		count+=1
 		if((count<1000 and count % 100==0) or count % 1000==0):

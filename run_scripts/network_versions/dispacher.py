@@ -285,7 +285,6 @@ def main():
 	xps = sorted(list(set(commands_to_run)))
 
 	# Ping DB
-	n=len(xps)/float(nprocs)
 	if validate:
 		xps=test(mongoURL,xps,version)
 	print(str({"cmd": "ADD", "data": xps}).replace("\\","/"))

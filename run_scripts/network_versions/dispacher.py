@@ -290,7 +290,7 @@ def main():
 		xps=test(mongoURL,xps,version)
 	print(str({"cmd": "ADD", "data": xps}).replace("\\","/"))
 	if pause_for_confirm:
-		input("Waiting to dispach " + str(len(xps)) + " experiments to "+str(server[0])+":"+str(server[1])+" Please confirm.\n"
+		input("Waiting to dispach " + str(len(xps)) + " experiments to "+str(server[0])+":"+str(server[1])+" Please confirm.\n")
 	sys.stderr.write("Dispaching (up to) " + str(len(xps)) + " experiments\n")
 	
 	s = socket.socket()

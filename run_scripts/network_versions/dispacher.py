@@ -28,7 +28,7 @@ def test(mongo,commands,version):
 	print("Testing "+str(len(commands))+" potential commands")
 	for command in commands:
 		count+=1
-		if((count<1000 and count % 100==0) or count % 1000==0):
+		if((count<10)or(count<100 and count % 10==0)or(count<1000 and count % 100==0) or count % 1000==0):
 			print(count)
 		print_json_command_to_run = command[0] + " --print_JSON " + " 2> /dev/null"
 		try:

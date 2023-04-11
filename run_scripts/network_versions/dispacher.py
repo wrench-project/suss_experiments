@@ -24,7 +24,11 @@ def test(mongo,commands,version):
 	mydb = mongo_client["scheduling_with_simulation"]
 	collection = mydb["results_" + version]
 	ret=[]
+	count=0
 	for command in commands:
+		count+=1
+		if((count<1000 and count % 100==0) or count % 1000==0):
+			print(count)
 		print_json_command_to_run = command + " --print_JSON " + " 2> /dev/null"
 		try:
 			# print(print_json_command_to_run)
@@ -73,6 +77,7 @@ def main():
 		run_ideal = "--run-ideal" in sys.argv
 		
 		no_contention = "--no-contention" in sys.argv
+		pause_for_confirm = "--pause"in sys.argv
 		no_contention_in_speculative_executions = "--no-contention-in-speculative-executions" in sys.argv
 
 
@@ -110,6 +115,7 @@ def main():
 						 "[--run-ideal-multi-adaptation] "
 						 "[--run-noise <start seed> <end seed (inclusive)>] "
 						 "[--pre-validate <mongo url>]"
+						 "[--pause]"
 						 "\n\n")
 		sys.stderr.write("Example: " + sys.argv[0] + " v3 128.171.140.102:443 ../.. 0,1,2 0,1 --run-ideal "
 													 "--run-ideal-multi-adaptation --run-noise 1000 1005\n\n")
@@ -285,6 +291,8 @@ def main():
 	for i in range(nproc):
         os.wait()		
 	print(str({"cmd": "ADD", "data": xps}).replace("\\","/"))
+	if pause_for_confirm:
+		input("Waiting to dispach " + str(len(xps)) + " experiments to "+str(server[0])+":"+str(server[1])+" Please confirm.\n"
 	sys.stderr.write("Dispaching (up to) " + str(len(xps)) + " experiments\n")
 	
 	s = socket.socket()

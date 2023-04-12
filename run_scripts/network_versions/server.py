@@ -115,10 +115,10 @@ def connectionThread(c,addr,mydb):
 							print("	Not Acknowledged")
 							with todoLock:
 								todo.append(next)
-						else:
-							print("	Nothing to do")
-							c.send("NONE".encode('utf-8'))
-							ack = c.recv(1024)
+					else:
+						print("	Nothing to do")
+						c.send("NONE".encode('utf-8'))
+						ack = c.recv(1024)
 						#print("LOCK 108 todo release")
 					readyNext(mydb,False)
 			elif (command == "RET"):

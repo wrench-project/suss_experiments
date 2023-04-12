@@ -18,7 +18,36 @@ def foo(data):
 	print(data)
 	return data
 
+def test(mongo,commands,version):
+	from pymongo import MongoClient
+	mongo_client = MongoClient(host=mongo, serverSelectionTimeoutMS=1000)
+	mydb = mongo_client["scheduling_with_simulation"]
+	collection = mydb["results_" + version]
+	ret=[]
+	count=0
+	print("Testing "+str(len(commands))+" potential commands")
+	for command in commands:
+		count+=1
+		if((count<10)or(count<100 and count % 10==0)or(count<1000 and count % 100==0) or count % 1000==0):
+			print(count)
+		print_json_command_to_run = command[0] + " --print_JSON " + " 2> /dev/null"
+		try:
+			# print(print_json_command_to_run)
+			json_output = subprocess.check_output(print_json_command_to_run, shell=True)
+			config = json.loads(json_output)
+			collection = mydb["results_" + version]
 
+			if not collection.find_one(config):
+				ret.append(command)
+		
+			# sys.stderr.write(".")
+			# sys.stderr.flush()
+			
+		except:
+			print('Error when processing command "'+print_json_command_to_run+'"\n', file=sys.stderr)
+			
+			traceback.print_exc()
+	return ret
 def main():
 	# Argument parsing
 	######################
@@ -49,6 +78,7 @@ def main():
 		run_ideal = "--run-ideal" in sys.argv
 		
 		no_contention = "--no-contention" in sys.argv
+		pause_for_confirm = "--pause"in sys.argv
 		no_contention_in_speculative_executions = "--no-contention-in-speculative-executions" in sys.argv
 
 
@@ -62,6 +92,17 @@ def main():
 			
 		run_mitigation = "--run-mitigation" in sys.argv	
 
+		run_noise = "--run-noise" in sys.argv
+		if run_noise:
+			idx = sys.argv.index("--run-noise")
+			start_seed = int(sys.argv[idx + 1])
+			end_seed = int(sys.argv[idx + 2])
+			
+		validate = "--pre-validate" in sys.argv
+		if validate:
+			idx = sys.argv.index("--pre-validate")
+			mongoURL = sys.argv[idx + 1]
+			
 		if "--help" in sys.argv:
 			raise BaseException()
 
@@ -74,6 +115,8 @@ def main():
 						 "[--run-ideal] "
 						 "[--run-ideal-multi-adaptation] "
 						 "[--run-noise <start seed> <end seed (inclusive)>] "
+						 "[--pre-validate <mongo url>]"
+						 "[--pause]"
 						 "\n\n")
 		sys.stderr.write("Example: " + sys.argv[0] + " v3 128.171.140.102:443 ../.. 0,1,2 0,1 --run-ideal "
 													 "--run-ideal-multi-adaptation --run-noise 1000 1005\n\n")
@@ -242,7 +285,12 @@ def main():
 	# REMOVE DUPLICATES
 	xps = sorted(list(set(commands_to_run)))
 
+	# Ping DB
+	if validate:
+		xps=test(mongoURL,xps,version)
 	print(str({"cmd": "ADD", "data": xps}).replace("\\","/"))
+	if pause_for_confirm:
+		input("Waiting to dispach " + str(len(xps)) + " experiments to "+str(server[0])+":"+str(server[1])+" Please confirm.\n")
 	sys.stderr.write("Dispaching (up to) " + str(len(xps)) + " experiments\n")
 	
 	s = socket.socket()

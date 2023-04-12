@@ -27,8 +27,8 @@ def run_simulation(arg, docker_prefix):
     print("Processed")
     return results
 
-
 def main(arg1):
+	anti_nag=1;
     # docker_command = "docker run -d -v " + root_dir + ":/home/me jsspp_journal"
     # docker_container_id = subprocess.check_output(docker_command, shell=True).decode("utf-8").rstrip()
     # docker_prefix = "docker exec -it " + docker_container_id + " bash -c "
@@ -47,8 +47,10 @@ def main(arg1):
             print(e)
 
         if (len(data) == 0 or data == "NONE"):
-            time.sleep(60)
+            time.sleep(30*anti_nag)
+			anti_nag+=2
         else:
+			anti_nag=2;
             # ret={"result":run_simulation(data,docker_prefix),"runcommand": data}
             ret = {"result": run_simulation(data, ""), "runcommand": data}
             pending = True
@@ -63,7 +65,9 @@ def main(arg1):
                         pending = False
                     s.close()
                 except:
-                    time.sleep(60)
+                    time.sleep(60*anti_nag)
+					anti_nag+=1
+					
 
 
 # docker_command = "docker kill " + docker_container_id

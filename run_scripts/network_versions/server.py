@@ -95,24 +95,25 @@ def connectionThread(c,addr,mydb):
 					print("	" + str(addr) + " Requested Task")
 					next = readyNext(mydb)
 					#print("LOCK 83 todo acquire")
-					with todoLock:
+					
 						
-						if next:
-							print("	Sending task")
-							c.send(str(next[0]).encode('utf-8'))
-							ack = c.recv(1024)
-							print(ack)
-							if (ack == "ACK".encode('utf-8')):
-								print("	Acknowledged")
-								#print("LOCK 94 ds acquire")
-								with dispatchedLock:
+					if next:
+						print("	Sending task")
+						c.send(str(next[0]).encode('utf-8'))
+						ack = c.recv(1024)
+						print(ack)
+						if (ack == "ACK".encode('utf-8')):
+							print("	Acknowledged")
+							#print("LOCK 94 ds acquire")
+							with dispatchedLock:
+							
+								dispatched[next[0]] = {"time": time.time(), "request": next[0], "db": next[1]}
+								#print("LOCK 98 ds release")
 								
-									dispatched[next[0]] = {"time": time.time(), "request": todo[0], "db": next[1]}
-									#print("LOCK 98 ds release")
-									
-								
-							else:
-								print("	Not Acknowledged")
+							
+						else:
+							print("	Not Acknowledged")
+							with todoLock:
 								todo.append(next)
 						else:
 							print("	Nothing to do")

@@ -107,7 +107,7 @@ def connectionThread(c,addr,mydb):
 							#print("LOCK 94 ds acquire")
 							with dispatchedLock:
 							
-								dispatched[next[0]] = {"time": time.time(), "request": next[0], "db": next[1]}
+								dispatched[next[0]] = {"time": time.time(), "request": next, "db": next[1]}
 								#print("LOCK 98 ds release")
 								
 							
@@ -174,6 +174,9 @@ def connectionThread(c,addr,mydb):
 				print("	purging todo")
 				with todoLock:
 					todo=[]
+			elif (command=="COUNT"):
+				with todoLock:
+					print("TODO "+str(len(todo)))
 			else:
 				print("	unknown command: " + str(rec["cmd"]) + str(rec))
 	finally:			

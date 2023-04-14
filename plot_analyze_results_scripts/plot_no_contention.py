@@ -37,7 +37,7 @@ def plot_no_contention_noise(plot_path, results_dict, best_algorithm_on_average,
 				continue
 			for platform in noNoise[workflow]:
 				if len(platform)<80:#p3 only
-					continue
+					pass
 				if not platform in noReduction[workflow] or not platform in noContention[workflow]:
 					continue
 				#print(platform)
@@ -114,7 +114,7 @@ def plot_no_contention_noise(plot_path, results_dict, best_algorithm_on_average,
 	x_value = 0.1
 	x_ticks = range(0, 11)
 	x_ticklabels = [0,.1, .2, .3, .4, .5, .6, .7, .8, .9, 1.0]
-
+	#ax1.set_yscale('symlog')
 	ax1.set_xticks(x_ticks)
 	ax1.set_xticklabels(x_ticklabels, rotation=45, fontsize=fontsize - 2)
 
@@ -128,12 +128,12 @@ def plot_no_contention_noise(plot_path, results_dict, best_algorithm_on_average,
 	colors={}
 	n=0
 	
-	cmap=plt.cm.get_cmap("hsv", len(averages)*2)#I want this to generalize to n plots, but if n=2, I want blue and red
+	cmap=plt.cm.get_cmap("hsv", len(averages)+1)#I want this to generalize to n plots, but if n=2, I want blue and red
 	for workflow in averages:
 		colors[workflow]=cmap(n)
-		n+=2
+		n+=1
 	for workflow in averages:
-			ax1.errorbar(range(0, len(averages[workflow]["noise"])), averages[workflow]["noise"], yerr=errors[workflow]["noise"], capsize=5,color=colors[workflow], label=workflow.split("-")[0]+" with contention",ecolor='black')
+			ax1.errorbar(range(0, len(averages[workflow]["noise"])), averages[workflow]["noise"][:], yerr=errors[workflow]["noise"][:], capsize=5,color=colors[workflow], label=workflow.split("-")[0]+" with contention",ecolor='black')
 			#ax1.plot(range(0, len(averages[workflow]["noise"])), averages[workflow]["noise"], 'b-', linewidth=2,color=colors[workflow], label=workflow.split("-")[0])
 			
 			ax1.errorbar(range(0, len(averages[workflow]["noContention"])), averages[workflow]["noContention"], yerr=errors[workflow]["noContention"], capsize=5,color=colors[workflow], linestyle='dashed', label=workflow.split("-")[0]+" without contention")
@@ -141,7 +141,7 @@ def plot_no_contention_noise(plot_path, results_dict, best_algorithm_on_average,
 	plt.legend()		
 	# Create the figure
 
-	plt.ylim([0,100])
+	plt.ylim([0,70])
 
 	plt.yticks(fontsize=fontsize)
 	f.tight_layout()
@@ -164,5 +164,5 @@ if __name__ == "__main__":
 	sys.stdout.write("\n# NO CONTENTION (NOISE) PLOT \n")
 	sys.stdout.write("#######################\n")
 	plot_path, result_dicts, workflows, clusters, best_algorithm_on_average = importData(sys.argv[1], 1)
-	plot_no_contention_noise(plot_path, result_dicts, best_algorithm_on_average,["srasearch-chameleon-10a-003.json","bwa-chameleon-large-003.json"])
+	plot_no_contention_noise(plot_path, result_dicts, best_algorithm_on_average,["srasearch-chameleon-10a-003.json","bwa-chameleon-large-003.json","epigenomics-chameleon-ilmn-4seq-50k-001.json"])
 	

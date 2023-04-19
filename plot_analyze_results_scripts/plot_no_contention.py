@@ -172,7 +172,7 @@ def plot_no_contention_noise(plot_path, results_dict, best_algorithm_on_average,
 				 yerr=errors[dataset1]["noise"], 
 				 capsize=5,
 				 color=colors[dataset1], 
-				 label="Dataset 1 with contention",
+				 label=dataset1.split("-")[0]+" with contention",
 				 ecolor='black',zorder=1)
 	ax1.errorbar(range(0, len(averages[dataset1]["noContention"])), 
 				 averages[dataset1]["noContention"], 
@@ -180,7 +180,7 @@ def plot_no_contention_noise(plot_path, results_dict, best_algorithm_on_average,
 				 capsize=5,
 				 color=colors[dataset1], 
 				 linestyle='dashed', 
-				 label="Dataset 1 without contention",
+				 label=dataset1.split("-")[0]+" without contention",
 					 ecolor='black',zorder=10)
 
 	# Plot other two datasets on bottom subplot

@@ -36,7 +36,7 @@ def plot_no_contention_noise(plot_path, results_dict, best_algorithm_on_average,
 
 		noReduction = noiseV[base_noise][base_noise]
 		noContention= contentionV[base_noise][base_noise]
-		
+
 		for workflow in workflows:
 			if not workflow in noReduction or not workflow in noContention:
 				continue
@@ -50,7 +50,7 @@ def plot_no_contention_noise(plot_path, results_dict, best_algorithm_on_average,
 					# print(noise)
 					# print(noNoise[workflow][platform])
 					algs = noNoise[workflow][platform]
-					
+
 					safeRemove(algs, "us")
 					best = min(algs.values())
 					if not workflow in transMap:
@@ -103,7 +103,7 @@ def plot_no_contention_noise(plot_path, results_dict, best_algorithm_on_average,
 			averages[workflow][base_noise]["noContention"]=average
 			errors[workflow][base_noise]["noContention"]=std_error
 	finalAverages={}
-	finalErrors={}	
+	finalErrors={}
 	for workflow in averages:
 		finalAverages[workflow]={}
 		finalErrors[workflow]={}
@@ -113,7 +113,7 @@ def plot_no_contention_noise(plot_path, results_dict, best_algorithm_on_average,
 		finalErrors[workflow]["noContention"]=[None] * 11
 		for i in range(0,11):
 			key=i/10
-			
+
 			finalAverages[workflow]["noise"][i]=averages[workflow][key]["noise"]
 			finalErrors[workflow]["noise"][i]=	errors[workflow][key]["noise"]
 			finalAverages[workflow]["noContention"][i]=averages[workflow][key]["noContention"]
@@ -153,9 +153,6 @@ def plot_no_contention_noise(plot_path, results_dict, best_algorithm_on_average,
 	ax1.set_ylim([0,80])
 	ax2.set_ylim([0,10])
 
-	# Create handles for legend
-	handles = []
-
 	# Set colors for each workflow
 	colors = {}
 	n = 0
@@ -166,46 +163,72 @@ def plot_no_contention_noise(plot_path, results_dict, best_algorithm_on_average,
 	#print(averages.keys())
 	#return
 	# Plot first dataset on top subplot
-	
+
+	workflow_indices = {}
+	workflow_indices['srasearch-chameleon-10a-003.json'] = 8
+	workflow_indices['bwa-chameleon-large-003.json'] = 3
+	workflow_indices['epigenomics-chameleon-ilmn-4seq-50k-001.json'] = 5
+
 	# Invert x-axis
 	ax1.invert_xaxis()
 	dataset1='srasearch-chameleon-10a-003.json'
-	ax1.errorbar(range(0, len(averages[dataset1]["noise"])), 
-				 averages[dataset1]["noise"], 
-				 yerr=errors[dataset1]["noise"], 
+	ax1.errorbar(range(0, len(averages[dataset1]["noise"])),
+				 averages[dataset1]["noise"],
+				 yerr=errors[dataset1]["noise"],
 				 capsize=5,
-				 color=colors[dataset1], 
-				 label=dataset1.split("-")[0]+" with contention",
-				 ecolor='black',zorder=1)
-	ax1.errorbar(range(0, len(averages[dataset1]["noContention"])), 
-				 averages[dataset1]["noContention"], 
-				 yerr=errors[dataset1]["noContention"], 
+				 color=colors[dataset1],
+				 linewidth=3,
+				 elinewidth=1,
+				 label="$W_" + str(workflow_indices[dataset1]) + "$ with-contention",
+				 ecolor='black',zorder=10)
+	ax1.errorbar(range(0, len(averages[dataset1]["noContention"])),
+				 averages[dataset1]["noContention"],
+				 yerr=errors[dataset1]["noContention"],
 				 capsize=5,
-				 color=colors[dataset1], 
-				 linestyle='dashed', 
-				 label=dataset1.split("-")[0]+" without contention",
-					 ecolor='black',zorder=10)
+				 linewidth=3,
+				 elinewidth=1,
+				 color=colors[dataset1],
+				 linestyle='dashed',
+				 label="$W_" + str(workflow_indices[dataset1]) + "$ without-contention",
+				 ecolor='black',zorder=10)
 
 	# Plot other two datasets on bottom subplot
-	for workflow in [ 'bwa-chameleon-large-003.json', 'epigenomics-chameleon-ilmn-4seq-50k-001.json']:
-		ax2.errorbar(range(0, len(averages[workflow]["noise"])), 
-					 averages[workflow]["noise"], 
-					 yerr=errors[workflow]["noise"], 
+	for workflow in ['bwa-chameleon-large-003.json', 'epigenomics-chameleon-ilmn-4seq-50k-001.json']:
+		ax2.errorbar(range(0, len(averages[workflow]["noise"])),
+					 averages[workflow]["noise"],
+					 yerr=errors[workflow]["noise"],
 					 capsize=5,
-					 color=colors[workflow], 
-					 label=workflow.split("-")[0]+" with contention",
+					 linewidth=3,
+					 elinewidth=1,
+					 color=colors[workflow],
+					 # label=workflow.split("-")[0]+" with contention",
+					 label="$W_" + str(workflow_indices[workflow]) + "$ with-contention",
 					 ecolor='black',zorder=10)
-		ax2.errorbar(range(0, len(averages[workflow]["noContention"])), 
-					 averages[workflow]["noContention"], 
-					 yerr=errors[workflow]["noContention"], 
+		ax2.errorbar(range(0, len(averages[workflow]["noContention"])),
+					 averages[workflow]["noContention"],
+					 yerr=errors[workflow]["noContention"],
 					 capsize=5,
-					 color=colors[workflow], 
-					 linestyle='dashed', 
-					 label=workflow.split("-")[0]+" without contention",
-					 ecolor='black',zorder=1)
+					 linewidth=3,
+					 elinewidth=1,
+					 color=colors[workflow],
+					 linestyle='dashed',
+					 label="$W_" + str(workflow_indices[workflow]) + "$ without-contention",
+					 ecolor='black',zorder=10)
+
 
 	# Set legend
-	f.legend(loc=7)
+	handles, labels = ax1.get_legend_handles_labels()
+	# remove the errorbars
+	handles = [h[0] for h in handles]
+	# use them in the legend
+	ax1.legend(handles, labels, loc='lower left', numpoints=1, fontsize=14)
+
+	handles, labels = ax2.get_legend_handles_labels()
+	# remove the errorbars
+	handles = [h[0] for h in handles]
+	# use them in the legend
+	ax2.legend(handles, labels, loc='upper right', numpoints=1, fontsize=14)
+	# f.legend(loc=7)
 
 	#plt.ylim([0,70])
 
@@ -216,7 +239,7 @@ def plot_no_contention_noise(plot_path, results_dict, best_algorithm_on_average,
 	plt.savefig(output_filename)
 	plt.close()
 	sys.stdout.write("Generated plot '" + output_filename + "'\n")
-	#print(averages)
+#print(averages)
 
 
 

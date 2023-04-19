@@ -2,6 +2,8 @@
 #import warnings
 #warnings.filterwarnings("error")
 from plot_utils import *
+
+
 def plot_no_contention_ideal(plot_path, results_dict, best_algorithm_on_average):
 	baseline = results_dict["basic_algorithms"]
 	contention = results_dict["no_contention"]
@@ -15,10 +17,11 @@ def plot_no_contention_ideal(plot_path, results_dict, best_algorithm_on_average)
 					best=alg
 			realBest= min(baseline[workflow][platform].values())
 			print(round(dgfb(realBest,baseline[workflow][platform][best]),2),workflow,platform)
-def plot_no_contention_noise(plot_path, results_dict, best_algorithm_on_average,workflows):
+
+
+def plot_no_contention_noise(plot_path, results_dict, best_algorithm_on_average, workflows):
 	# (Re) Compute the dfb of the best_algorithm_on_average
 	noNoise = results_dict["basic_algorithms"]
-
 
 	# Compute our dfb for all noises
 	averages = {}
@@ -38,7 +41,7 @@ def plot_no_contention_noise(plot_path, results_dict, best_algorithm_on_average,
 			if not workflow in noReduction or not workflow in noContention:
 				continue
 			for platform in noNoise[workflow]:
-				if len(platform)<80:#p3 only
+				if len(platform) < 80: #p3 only
 					continue
 				if not platform in noReduction[workflow] or not platform in noContention[workflow]:
 					continue
@@ -215,17 +218,19 @@ def plot_no_contention_noise(plot_path, results_dict, best_algorithm_on_average,
 	sys.stdout.write("Generated plot '" + output_filename + "'\n")
 	#print(averages)
 
+
+
 if __name__ == "__main__":
 	if len(sys.argv) != 2:
 		sys.stderr.write("Usage: " + sys.argv[0] + " <version>\n")
 		sys.exit(1)
 
-	sys.stdout.write("\n# NO CONTENTION (IDEAL) PLOT \n")
+	sys.stdout.write("\n# NO CONTENTION (IDEAL) RESULTS \n")
 	sys.stdout.write("#######################\n")
 	plot_path, result_dicts, workflows, clusters, best_algorithm_on_average = importData(sys.argv[1], 1)
 	plot_no_contention_ideal(plot_path, result_dicts, best_algorithm_on_average)
 	sys.stdout.write("\n# NO CONTENTION (NOISE) PLOT \n")
 	sys.stdout.write("#######################\n")
 	plot_path, result_dicts, workflows, clusters, best_algorithm_on_average = importData(sys.argv[1], 1)
-	plot_no_contention_noise(plot_path, result_dicts, best_algorithm_on_average,["srasearch-chameleon-10a-003.json","bwa-chameleon-large-003.json","epigenomics-chameleon-ilmn-4seq-50k-001.json"])
+	plot_no_contention_noise(plot_path, result_dicts, best_algorithm_on_average,["srasearch-chameleon-10a-003.json", "bwa-chameleon-large-003.json", "epigenomics-chameleon-ilmn-4seq-50k-001.json"])
 	

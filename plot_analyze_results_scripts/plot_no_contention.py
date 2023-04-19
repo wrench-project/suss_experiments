@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+#import warnings
+#warnings.filterwarnings("error")
 from plot_utils import *
 def plot_no_contention_ideal(plot_path, results_dict, best_algorithm_on_average):
 	baseline = results_dict["basic_algorithms"]
@@ -37,7 +39,7 @@ def plot_no_contention_noise(plot_path, results_dict, best_algorithm_on_average,
 				continue
 			for platform in noNoise[workflow]:
 				if len(platform)<80:#p3 only
-					pass
+					continue
 				if not platform in noReduction[workflow] or not platform in noContention[workflow]:
 					continue
 				#print(platform)
@@ -78,13 +80,23 @@ def plot_no_contention_noise(plot_path, results_dict, best_algorithm_on_average,
 					flats[workflow][base_noise]["noise"].append(point)
 				for point in transMap[workflow][platform]["noContention"]:
 					flats[workflow][base_noise]["noContention"].append(point)
-			#print(flats[workflow][base_noise])
-			std_error = np.std(flats[workflow][base_noise]["noise"], ddof=1) / np.sqrt(len(flats[workflow][base_noise]["noise"]))
+			#print(workflow,base_noise)
+			#print(flats[workflow][base_noise]["noise"])
+			if len(flats[workflow][base_noise]["noise"])==1:
+				std_error=0;
+			else:
+				std_error = np.std(flats[workflow][base_noise]["noise"], ddof=1) / np.sqrt(len(flats[workflow][base_noise]["noise"]))
 			average = sum(flats[workflow][base_noise]["noise"]) / len(flats[workflow][base_noise]["noise"])
 			averages[workflow][base_noise]["noise"]=average
 			errors[workflow][base_noise]["noise"]=std_error
-			std_error = np.std(flats[workflow][base_noise]["noContention"], ddof=1) / np.sqrt(len(flats[workflow][base_noise]["noContention"]))
-			average = sum(flats[workflow][base_noise]["noContention"]) / len(flats[workflow][base_noise]["noContention"])
+			if len(flats[workflow][base_noise]["noContention"]):
+				std_error=0;
+			else:
+				std_error = np.std(flats[workflow][base_noise]["noContention"], ddof=1) / np.sqrt(len(flats[workflow][base_noise]["noContention"]))
+			if len(flats[workflow][base_noise]["noContention"])>0:
+				average = sum(flats[workflow][base_noise]["noContention"]) / len(flats[workflow][base_noise]["noContention"])
+			else:
+				average = sum(flats[workflow][base_noise]["noContention"]) / 1
 			averages[workflow][base_noise]["noContention"]=average
 			errors[workflow][base_noise]["noContention"]=std_error
 	finalAverages={}
@@ -106,51 +118,102 @@ def plot_no_contention_noise(plot_path, results_dict, best_algorithm_on_average,
 	averages=finalAverages
 	errors=finalErrors
 	fontsize = 18
-	f, ax1 = plt.subplots(1, 1, sharey=True, figsize=(12, 6))
+
+	# Create the figure and subplots
+	f, (ax1, ax2) = plt.subplots(2, 1, sharex=True,sharey=False, figsize=(12, 6))
+	#f.subplots_adjust(hspace=0.2)
+
+	# Set grid and display width
 	ax1.yaxis.grid()
+	ax2.yaxis.grid()
 	display_width = 0.027
 
-	handles = []
-	x_value = 0.1
+	# Set x-ticks and labels
 	x_ticks = range(0, 11)
 	x_ticklabels = [0,.1, .2, .3, .4, .5, .6, .7, .8, .9, 1.0]
-	#ax1.set_yscale('symlog')
-	ax1.set_xticks(x_ticks)
-	ax1.set_xticklabels(x_ticklabels, rotation=45, fontsize=fontsize - 2)
+	ax2.set_xticks(x_ticks)
+	ax1.tick_params(axis='y', labelsize=fontsize - 2)
+	ax2.tick_params(axis='y', labelsize=fontsize - 2)
+	ax1.set_yticks(range(0, 81, 10))
+	ax2.set_yticks(range(0, 11, 2))
+	ax2.set_xticklabels(x_ticklabels, rotation=45, fontsize=fontsize - 2)
 
-	ax1.set_ylabel("% degradation from best (dfb)", fontsize=fontsize)
-	ax1.set_xlabel("Simulation error magnitude ($e$)", fontsize=fontsize)
+	# Set y-axis labels
+	#plt.set_ylabel("% degradation from best (dfb)", fontsize=fontsize)
+	ax2.set_ylabel(" ", fontsize=fontsize)
+	f.text(0.02, 0.5, '% degradation from best (dfb)', ha='center', va='center', rotation='vertical', fontsize=fontsize)
+
+	ax2.set_xlabel("Simulation error magnitude ($e$)", fontsize=fontsize)
+
+
+	# Set y-axis limits
+	ax1.set_ylim([0,80])
+	ax2.set_ylim([0,10])
+
+	# Create handles for legend
+	handles = []
+
+	# Set colors for each workflow
+	colors = {}
+	n = 0
+	cmap = plt.cm.get_cmap("hsv", len(averages) + 1)
+	for workflow in averages:
+		colors[workflow] = cmap(n)
+		n += 1
+	#print(averages.keys())
+	#return
+	# Plot first dataset on top subplot
+	
+	# Invert x-axis
 	ax1.invert_xaxis()
-	#ax1.plot([x_ticks[0]-0.5, x_ticks[-1]+0.5], [best_algorithm_on_average_ave_dfb, best_algorithm_on_average_ave_dfb], 'r-')
-	
+	dataset1='srasearch-chameleon-10a-003.json'
+	ax1.errorbar(range(0, len(averages[dataset1]["noise"])), 
+				 averages[dataset1]["noise"], 
+				 yerr=errors[dataset1]["noise"], 
+				 capsize=5,
+				 color=colors[dataset1], 
+				 label="Dataset 1 with contention",
+				 ecolor='black',zorder=1)
+	ax1.errorbar(range(0, len(averages[dataset1]["noContention"])), 
+				 averages[dataset1]["noContention"], 
+				 yerr=errors[dataset1]["noContention"], 
+				 capsize=5,
+				 color=colors[dataset1], 
+				 linestyle='dashed', 
+				 label="Dataset 1 without contention",
+					 ecolor='black',zorder=10)
 
-	pos = x_ticks[0]
-	colors={}
-	n=0
-	
-	cmap=plt.cm.get_cmap("hsv", len(averages)+1)#I want this to generalize to n plots, but if n=2, I want blue and red
-	for workflow in averages:
-		colors[workflow]=cmap(n)
-		n+=1
-	for workflow in averages:
-			ax1.errorbar(range(0, len(averages[workflow]["noise"])), averages[workflow]["noise"][:], yerr=errors[workflow]["noise"][:], capsize=5,color=colors[workflow], label=workflow.split("-")[0]+" with contention",ecolor='black')
-			#ax1.plot(range(0, len(averages[workflow]["noise"])), averages[workflow]["noise"], 'b-', linewidth=2,color=colors[workflow], label=workflow.split("-")[0])
-			
-			ax1.errorbar(range(0, len(averages[workflow]["noContention"])), averages[workflow]["noContention"], yerr=errors[workflow]["noContention"], capsize=5,color=colors[workflow], linestyle='dashed', label=workflow.split("-")[0]+" without contention")
-			#ax1.plot(range(0, len(averages[workflow]["noContention"])), averages[workflow]["noContention"], 'b-', linewidth=2,color=colors[workflow], linestyle='dashed')
-	plt.legend()		
-	# Create the figure
+	# Plot other two datasets on bottom subplot
+	for workflow in [ 'bwa-chameleon-large-003.json', 'epigenomics-chameleon-ilmn-4seq-50k-001.json']:
+		ax2.errorbar(range(0, len(averages[workflow]["noise"])), 
+					 averages[workflow]["noise"], 
+					 yerr=errors[workflow]["noise"], 
+					 capsize=5,
+					 color=colors[workflow], 
+					 label=workflow.split("-")[0]+" with contention",
+					 ecolor='black',zorder=10)
+		ax2.errorbar(range(0, len(averages[workflow]["noContention"])), 
+					 averages[workflow]["noContention"], 
+					 yerr=errors[workflow]["noContention"], 
+					 capsize=5,
+					 color=colors[workflow], 
+					 linestyle='dashed', 
+					 label=workflow.split("-")[0]+" without contention",
+					 ecolor='black',zorder=1)
 
-	plt.ylim([0,70])
+	# Set legend
+	f.legend(loc=7)
 
-	plt.yticks(fontsize=fontsize)
+	#plt.ylim([0,70])
+
+	plt.yticks(fontsize=fontsize-2)
 	f.tight_layout()
 
 	output_filename = plot_path + "no_contention_noise.pdf"
 	plt.savefig(output_filename)
 	plt.close()
 	sys.stdout.write("Generated plot '" + output_filename + "'\n")
-	
+	#print(averages)
 
 if __name__ == "__main__":
 	if len(sys.argv) != 2:

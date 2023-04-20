@@ -155,14 +155,18 @@ def plot_no_contention_noise(plot_path, results_dict, best_algorithm_on_average,
 
 	# Set colors for each workflow
 	colors = {}
-	n = 0
-	cmap = plt.cm.get_cmap("hsv", len(averages) + 1)
-	for workflow in averages:
-		colors[workflow] = cmap(n)
-		n += 1
+	#n = 0
+	#cmap = plt.cm.get_cmap("hsv", len(averages) + 1)
+	#for workflow in averages:
+	#	colors[workflow] = cmap(n)
+	#	n += 1
 	#print(averages.keys())
 	#return
 	# Plot first dataset on top subplot
+	colors['srasearch-chameleon-10a-003.json'] = "red"
+	colors['bwa-chameleon-large-003.json'] = "royalblue"
+	colors['epigenomics-chameleon-ilmn-4seq-50k-001.json'] = "darkorange"
+    
 
 	workflow_indices = {}
 	workflow_indices['srasearch-chameleon-10a-003.json'] = 8

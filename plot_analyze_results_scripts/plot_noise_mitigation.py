@@ -7,7 +7,7 @@ from plot_utils import *
 ##########################################
 def plot_noise_lines(results_dict, best_algorithm_on_average):
 
-	transMap = {};
+	transMap = {}
 	for noise in results_dict["mitigation"]:
 		# print(results_dict["mitigation"][noise])
 
@@ -22,7 +22,7 @@ def plot_noise_lines(results_dict, best_algorithm_on_average):
 						best = average(noReduction[workflow][platform]["us"])
 
 						algs = noReduction[workflow][platform].copy()
-						algs.pop("us");
+						algs.pop("us")
 						medi = sorted(algs.values())[len(algs) // 2]
 						transMap[workform] = [best, dgfb(best, medi), dgfb(best,
 																		   results_dict["basic_algorithms"][workflow][
@@ -121,6 +121,7 @@ def plot_single_noise_line(results_dict, base_noise, target_noise, best_algorith
 
 				transMap[workform] = {"best": best, "median": medi, "ranks": ranks,
 									  "boa": dgfb(best, noNoise[workflow][platform][best_algorithm_on_average])}
+				# print(noReduction[workflow][platform])
 				points = noReduction[workflow][platform]["us"].copy()
 				# print(points)
 				for i in range(len(points)):
@@ -151,9 +152,6 @@ def plot_single_noise_line(results_dict, base_noise, target_noise, best_algorith
 	for workform in transMap:
 		# transpose.append(transMap[workform])
 		transpose.append({"workform": workform, "data": transMap[workform]})
-		
-
-	# print(transpose)
 
 	transpose = sorted(transpose, key=lambda x: x["data"]["boa"])
 	# print(transpose)
@@ -205,7 +203,7 @@ def plot_single_noise_line(results_dict, base_noise, target_noise, best_algorith
 	for i in range(len(transpose)):
 		line = transpose[i]["ranks"][len(transpose[i]["ranks"]) // 2]
 		if len(transpose[i]["points"]) != 0:
-			plot_violin(ax1, pos, .8, transpose[i]["points"], "yellow", 0.5)
+			plot_violin(ax1, pos, .8, transpose[i]["points"], "yellow", 0.9)
 			pos += 1
 		#print("workform:",x_ticklabels[i],"average=",average(transpose[i]["points"]))
 	# Legend
@@ -219,6 +217,20 @@ def plot_single_noise_line(results_dict, base_noise, target_noise, best_algorith
 	sys.stdout.write("Generated plot '" + output_file + "'\n")
 
 
+	mean_max_values = {}
+	for workform in transMap:
+		# print(workform)
+		# print(transMap[workform]["points"])
+		if len(transMap[workform]["points"]) > 0:
+			mean_value = sum(transMap[workform]["points"])/len(transMap[workform]["points"])
+			max_value = max(transMap[workform]["points"])
+		else:
+			mean_value = 0
+			max_value = 0
+		mean_max_values[workform] = [mean_value, max_value, transMap[workform]["points"]]
+	return mean_max_values
+
+
 if __name__ == "__main__":
 	if len(sys.argv) != 2:
 		sys.stderr.write("Usage: " + sys.argv[0] + " <version>\n")
@@ -229,10 +241,41 @@ if __name__ == "__main__":
 	sys.stdout.write("\n# ERROR PLOTS\n")
 	sys.stdout.write("#############\n")
 	#start_noises = [0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0]
-	start_noises = [0.0,0.3,1.0]
+	start_noises = [0.0, 0.3, 1.0]
+	mean_max_values = {}
 	for start_noise_index in range(0, len(start_noises)):
 		start_noise = start_noises[start_noise_index]
+		mean_max_values[start_noise] = {}
 		for end_noise_index in range(0, start_noise_index + 1):
 			end_noise = start_noises[end_noise_index]
-			plot_single_noise_line(result_dicts, start_noise, end_noise, best_algorithm_on_average,
+			mean_max_values[start_noise][end_noise] = plot_single_noise_line(result_dicts, start_noise, end_noise, best_algorithm_on_average,
 								   plot_path + "dfb_all_all_scenario_noise_" + str(start_noise) + "_mitigitated_noise_" + str(end_noise) + ".pdf")
+
+	# Print some statistics needed in the paper
+	mean_improved = 0
+	max_improved = 0
+	# print(mean_max_values[1.0][1.0])
+	for workform in mean_max_values[1.0][1.0]:
+		mean_delta = mean_max_values[1.0][1.0][workform][0] - mean_max_values[1.0][0.3][workform][0]
+		# print(workform + ": " + str(mean_max_values[1.0][1.0][workform][0]) + " --> " + str(mean_max_values[1.0][0.3][workform][0]))
+		max_delta = mean_max_values[1.0][1.0][workform][1] - mean_max_values[1.0][0.3][workform][1]
+		if mean_delta > 0:
+			mean_improved += 1
+		if max_delta > 0:
+			max_improved += 1
+	print("number of scenarios for which mitigating from 1.0 to 0.3 improved the mean: " + str(mean_improved))
+	print("number of scenarios for which mitigating from 1.0 to 0.3 improved the max: " + str(max_improved))
+
+	dfb_10_10 = []
+	dfb_10_03 = []
+	dfb_03_03 = []
+	for workform in mean_max_values[1.0][1.0]:
+		dfb_10_10 += mean_max_values[1.0][1.0][workform][2]
+	for workform in mean_max_values[1.0][0.3]:
+		dfb_10_03 += mean_max_values[1.0][0.3][workform][2]
+	for workform in mean_max_values[0.3][0.3]:
+		dfb_03_03 += mean_max_values[0.3][0.3][workform][2]
+	print("average dfb for 1.0-1.0: " + str(sum(dfb_10_10)/len(dfb_10_10)))
+	print("average dfb for 1.0-0.3: " + str(sum(dfb_10_03)/len(dfb_10_03)))
+	print("average dfb for 0.3-0.3: " + str(sum(dfb_03_03)/len(dfb_03_03)))
+

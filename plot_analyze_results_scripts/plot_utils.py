@@ -105,12 +105,15 @@ def print_dfb_statistics(results, verbosity=2):
     dfb = {algo: (value / num_complete_scenarios) for algo, value in dfb.items()}
 
     dfb = dict(sorted(dfb.items(), key=lambda x: x[1]))
+    count=0
     if verbosity > 1:
         for algo, avg_dfb in dfb.items():
+            if count==int(len(dfb)/2):
+                sys.stdout.write("Median: ")
             sys.stdout.write(algo + "\n")
             sys.stdout.write("  - average fdb: " + str(round(avg_dfb, 2)) + "\n")
             sys.stdout.write("  - worst   dfb: " + str(round(worst_dfb[algo], 2)) + "\n")
-
+            count+=1
     return [x for x in dfb.items()][0][0]  # Return best algorithm on average
 
 

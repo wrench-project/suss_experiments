@@ -17,7 +17,7 @@ cluster_index_map = {}
 # Helper function to compute dfb
 ######################################
 def dgfb(best, target):
-    return 100.0 * (target - best) / best
+    return round(100.0 * (target - best) / best,2)
 
 
 #

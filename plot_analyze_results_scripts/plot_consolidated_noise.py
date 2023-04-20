@@ -41,7 +41,7 @@ def plot_adfb_lines(plot_path, workflow, platform, noise_lines):
                      fontsize=fontsize - 1)
 
     plt.yticks(fontsize=fontsize)
-    plt.legend()
+    plt.legend(fontsize=fontsize, ncol=2)
 
     plt.tight_layout()
 

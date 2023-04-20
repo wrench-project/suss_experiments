@@ -66,7 +66,7 @@ def plot_no_mitigation(plot_path, results_dict, best_algorithm_on_average):
         errors.append(std_error)
 
     fontsize = 18
-    f, ax1 = plt.subplots(1, 1, sharey=True, figsize=(12, 6))
+    f, ax1 = plt.subplots(1, 1, sharey=True, figsize=(12, 4))
     ax1.yaxis.grid()
     display_width = 0.027
 
@@ -78,7 +78,7 @@ def plot_no_mitigation(plot_path, results_dict, best_algorithm_on_average):
     ax1.set_xticks(x_ticks)
     ax1.set_xticklabels(x_ticklabels, rotation=45, fontsize=fontsize - 2)
 
-    ax1.set_ylabel("% degradation from best (dfb)", fontsize=fontsize)
+    ax1.set_ylabel("% degradation from best (dfb)", fontsize=fontsize-3)
     ax1.set_xlabel("Simulation error magnitude ($e$)", fontsize=fontsize)
     ax1.invert_xaxis()
     ax1.plot([x_ticks[0]-0.5, x_ticks[-1]+0.5], [best_algorithm_on_average_ave_dfb, best_algorithm_on_average_ave_dfb], 'r-')
@@ -95,7 +95,7 @@ def plot_no_mitigation(plot_path, results_dict, best_algorithm_on_average):
     #	ax1.errorbar(range(0, len(averages)), averages, yerr=errors, capsize=10)
     # Create the figure
 
-    plt.ylim([0,20])
+    plt.ylim([0,16])
 
     plt.yticks(fontsize=fontsize)
     f.tight_layout()

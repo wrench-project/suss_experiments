@@ -175,6 +175,7 @@ def plot_no_contention_noise(plot_path, results_dict, best_algorithm_on_average,
 
 	# Invert x-axis
 	ax1.invert_xaxis()
+	ax1.set_yticks([0,20,40,60,80])
 	dataset1='srasearch-chameleon-10a-003.json'
 	ax1.errorbar(range(0, len(averages[dataset1]["noise"])),
 				 averages[dataset1]["noise"],
@@ -261,13 +262,13 @@ def plot_no_contention_noise(plot_path, results_dict, best_algorithm_on_average,
 	# remove the errorbars
 	handles = [h[0] for h in handles]
 	# use them in the legend
-	ax1.legend(handles, labels, loc='lower left', numpoints=1, fontsize=14)
+	ax1.legend(handles, labels, loc='lower left', numpoints=1, fontsize=15)
 
 	handles, labels = ax2.get_legend_handles_labels()
 	# remove the errorbars
 	handles = [h[0] for h in handles]
 	# use them in the legend
-	ax2.legend(handles, labels, loc='upper right', numpoints=1, fontsize=14)
+	ax2.legend(handles, labels, loc='upper right', numpoints=1, fontsize=15)
 	# f.legend(loc=7)
 
 	#plt.ylim([0,70])

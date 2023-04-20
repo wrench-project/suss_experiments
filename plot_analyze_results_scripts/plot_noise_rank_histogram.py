@@ -155,7 +155,7 @@ def plot_cumulative_rank_histograms(plot_path, results_dict, noises):
         histogram = histograms[i]
         ax1.plot(range(len(histogram)), [x * 100 for x in histogram], label="e=" + str(noises[i]), linewidth=2)
     plt.yticks(fontsize=fontsize)
-    plt.legend()
+    plt.legend(fontsize=fontsize+1)
     f.tight_layout()
 
     # plt.legend(handles=legend_elements, loc='upper center', fontsize=fontsize)

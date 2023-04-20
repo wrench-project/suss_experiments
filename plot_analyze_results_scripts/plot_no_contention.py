@@ -181,6 +181,15 @@ def plot_no_contention_noise(plot_path, results_dict, best_algorithm_on_average,
 				 elinewidth=1,
 				 label="$W_" + str(workflow_indices[dataset1]) + "$ with-contention",
 				 ecolor='black',zorder=10)
+	ax1.errorbar(range(0, len(averages[dataset1]["noise"])),
+				 averages[dataset1]["noise"],
+				 yerr=errors[dataset1]["noise"],
+				 capsize=5,
+				 color=colors[dataset1],
+				 linewidth=3,
+				 elinewidth=1,
+				 linestyle='None',
+				 ecolor='black',zorder=11)			 
 	ax1.errorbar(range(0, len(averages[dataset1]["noContention"])),
 				 averages[dataset1]["noContention"],
 				 yerr=errors[dataset1]["noContention"],
@@ -191,7 +200,15 @@ def plot_no_contention_noise(plot_path, results_dict, best_algorithm_on_average,
 				 linestyle='dashed',
 				 label="$W_" + str(workflow_indices[dataset1]) + "$ without-contention",
 				 ecolor='black',zorder=10)
-
+	ax1.errorbar(range(0, len(averages[dataset1]["noContention"])),
+				 averages[dataset1]["noContention"],
+				 yerr=errors[dataset1]["noContention"],
+				 capsize=5,
+				 linewidth=3,
+				 elinewidth=1,
+				 color=colors[dataset1],
+				 linestyle='None',
+				 ecolor='black',zorder=11)
 	# Plot other two datasets on bottom subplot
 	for workflow in ['bwa-chameleon-large-003.json', 'epigenomics-chameleon-ilmn-4seq-50k-001.json']:
 		ax2.errorbar(range(0, len(averages[workflow]["noise"])),
@@ -204,6 +221,16 @@ def plot_no_contention_noise(plot_path, results_dict, best_algorithm_on_average,
 					 # label=workflow.split("-")[0]+" with contention",
 					 label="$W_" + str(workflow_indices[workflow]) + "$ with-contention",
 					 ecolor='black',zorder=10)
+		ax2.errorbar(range(0, len(averages[workflow]["noise"])),
+					 averages[workflow]["noise"],
+					 yerr=errors[workflow]["noise"],
+					 capsize=5,
+					 linewidth=3,
+					 elinewidth=1,
+					 color=colors[workflow],
+					 linestyle='None',
+					 # label=workflow.split("-")[0]+" with contention",
+					 ecolor='black',zorder=11)			 
 		ax2.errorbar(range(0, len(averages[workflow]["noContention"])),
 					 averages[workflow]["noContention"],
 					 yerr=errors[workflow]["noContention"],
@@ -214,6 +241,15 @@ def plot_no_contention_noise(plot_path, results_dict, best_algorithm_on_average,
 					 linestyle='dashed',
 					 label="$W_" + str(workflow_indices[workflow]) + "$ without-contention",
 					 ecolor='black',zorder=10)
+		ax2.errorbar(range(0, len(averages[workflow]["noContention"])),
+					 averages[workflow]["noContention"],
+					 yerr=errors[workflow]["noContention"],
+					 capsize=5,
+					 linewidth=3,
+					 elinewidth=1,
+					 color=colors[workflow],
+					 linestyle='None',
+					 ecolor='black',zorder=11)
 
 
 	# Set legend

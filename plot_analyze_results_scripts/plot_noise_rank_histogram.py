@@ -142,7 +142,7 @@ def plot_cumulative_rank_histograms(plot_path, results_dict, noises):
     ax1.set_xlabel("Selected algorithm rank", fontsize=fontsize)
     # plt.yscale("logit")
     # Create the figure
-    plt.ylim(45, 101)
+    plt.ylim(30, 101)
     plt.xlim(-1, 47)
     plt.grid()
     for i in range(len(histograms)):

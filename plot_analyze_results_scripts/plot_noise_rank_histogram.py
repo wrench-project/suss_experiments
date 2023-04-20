@@ -20,7 +20,7 @@ def plot_rank_histograms(results_dict, base_noise, target_noise, output_file):
             try:
                 # print(noise)
                 # print(noNoise[workflow][platform])
-
+                	
                 best = min(noNoise[workflow][platform].values())
 
                 algs = noNoise[workflow][platform]
@@ -38,6 +38,8 @@ def plot_rank_histograms(results_dict, base_noise, target_noise, output_file):
                     # print(rank,len(ranks))
                     histogram[rank] += 1
                     total += 1
+                
+
             except KeyError:
                 break
             except ZeroDivisionError:
@@ -112,6 +114,10 @@ def plot_cumulative_rank_histograms(plot_path, results_dict, noises):
                         # print(rank,len(ranks))
                         histogram[rank] += 1
                         total += 1
+                    #if(base_noise==0):
+                    #    print(workflow,platform,rank,target)
+                    #    if(rank!=0):
+                    #    	print(ranks)
                 except KeyError:
                     break
                 except ZeroDivisionError:

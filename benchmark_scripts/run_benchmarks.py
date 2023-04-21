@@ -80,7 +80,7 @@ def main():
     for task_selection_scheme in task_selection_schemes:
         for cluster_selection_scheme in cluster_selection_schemes:
             for core_selection_scheme in core_selection_schemes:
-                command = f"/usr/bin/time -v scheduling_using_simulation_simulator --algorithm_selection_scheme makespan  --cluster_selection_schemes {cluster_selection_scheme} --clusters {platform} --core_selection_schemes {core_selection_scheme} --task_selection_schemes {task_selection_scheme} --first_scheduler_change_trigger 0 --periodic_scheduler_change_trigger 1.0 --reference_flops 3.21Gf --wrench-energy-simulation --simulation_noise_scheme micro-platform --speculative_work_fraction 1.0 --workflow {workflow}"
+                command = f"scheduling_using_simulation_simulator --algorithm_selection_scheme makespan  --cluster_selection_schemes {cluster_selection_scheme} --clusters {platform} --core_selection_schemes {core_selection_scheme} --task_selection_schemes {task_selection_scheme} --first_scheduler_change_trigger 0 --periodic_scheduler_change_trigger 1.0 --reference_flops 3.21Gf --wrench-energy-simulation --simulation_noise_scheme micro-platform --speculative_work_fraction 1.0 --workflow {workflow}"
                 t0 = time.time()
                 child = subprocess.Popen(command.split(" "))
                 child.wait()
@@ -94,7 +94,7 @@ def main():
     for task_selection_scheme in task_selection_schemes:
         for cluster_selection_scheme in cluster_selection_schemes:
             for core_selection_scheme in core_selection_schemes:
-                command = f"/usr/bin/time -v scheduling_using_simulation_simulator --algorithm_selection_scheme makespan  --cluster_selection_schemes {cluster_selection_scheme} --clusters {platform} --core_selection_schemes {core_selection_scheme} --task_selection_schemes {task_selection_scheme} --first_scheduler_change_trigger 0 --periodic_scheduler_change_trigger 1.0 --reference_flops 3.21Gf --wrench-energy-simulation --simulation_noise_scheme micro-platform --speculative_work_fraction 1.0 --workflow {workflow}"
+                command = f"scheduling_using_simulation_simulator --algorithm_selection_scheme makespan  --cluster_selection_schemes {cluster_selection_scheme} --clusters {platform} --core_selection_schemes {core_selection_scheme} --task_selection_schemes {task_selection_scheme} --first_scheduler_change_trigger 0 --periodic_scheduler_change_trigger 1.0 --reference_flops 3.21Gf --wrench-energy-simulation --simulation_noise_scheme micro-platform --speculative_work_fraction 1.0 --workflow {workflow}"
                 children.append(subprocess.Popen(command.split(" ")))
 
     for child in children:

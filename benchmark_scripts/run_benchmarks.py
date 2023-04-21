@@ -3,6 +3,7 @@ import glob
 import subprocess
 import shlex
 import sys
+import json
 
 
 
@@ -21,16 +22,16 @@ def main():
         ave_ratio = 0
         for trial in range(0,10):
             xp = subprocess.run(shlex.split(command), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            rss = 0
             for line in xp.stderr.decode("utf-8").split('\n'):
                 if "MAKESPAN" in line:
                     makespan = float(line.split(" ")[-1])
                 elif "Maximum resident set size" in line:
                     rss = 1000 * float(line.split(" ")[-1])
-                elif "Elapsed" in line:
-                    simtime = line.split(" ")[-1].split(":")[-1]
-                    minutes = float(simtime.split(":")[0])
-                    seconds = float(simtime.split(":")[1])
-                    simetime = minutes*60 + seconds
+
+            json_output = json.loads(xp.stdout.decode("utf-8"))
+            simtime = json_output["simulation_time"]
+
 
             ave_makespan += makespan
             ave_rss += rss
@@ -44,7 +45,7 @@ def main():
 
         ave_rss /= (1000*1000)
 
-        print(f"{workflow}: f{ave_makespan} f{ave_simtime} f{ave_ratio} f{ave_rss}")
+        print(f"{workflow}: {ave_makespan:.2f} & {ave_simtime:.2f} &   {ave_ratio:.2f} & {ave_rss:.2f}")
         
 
 if __name__ == "__main__":

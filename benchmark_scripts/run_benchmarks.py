@@ -4,6 +4,7 @@ import subprocess
 import shlex
 import sys
 import json
+import time
 
 
 
@@ -13,8 +14,8 @@ def main():
     workflows = glob.glob("../workflows/*.json")
     platform = "48:10:3.21Gf:1:100Gbps:10Gbps,32:16:4.0125Gf:1:100Gbps:7Gbps,10:48:6.4842Gf:1:100Gbps:8Gbps"
 
+    # Running A_11 for each workflow
     num_trials = 10
-
     for workflow in workflows:
         command = f"/usr/bin/time -v scheduling_using_simulation_simulator --algorithm_selection_scheme makespan  --cluster_selection_schemes most_local_data --clusters {platform} --core_selection_schemes as_many_as_possible --task_selection_schemes highest_bottom_level --first_scheduler_change_trigger 0 --periodic_scheduler_change_trigger 1.0 --reference_flops 3.21Gf --wrench-energy-simulation --simulation_noise_scheme micro-platform --speculative_work_fraction 1.0 --workflow {workflow}"
         ave_makespan = 0
@@ -48,7 +49,61 @@ def main():
 
         workflow_name = workflow.split("/")[-1].split("-")[0]
         print(f"{workflow_name} {ave_makespan:.2f} & {ave_simtime:.2f} &   {ave_ratio:.2f} & {ave_rss:.2f}")
-        
+
+
+    # Running things in parallel
+    task_selection_schemes = [
+        "most_flops",
+        "most_children",
+        "most_data",
+        "highest_bottom_level"
+    ]
+    cluster_selection_schemes = [
+        "fastest_cores",
+        "most_local_data",
+        "most_idle_cores",
+        "most_idle_cpu_resources"
+    ]
+    core_selection_schemes = [
+        "as_many_as_possible",
+        "parallel_efficiency_ninety_percent",
+        "parallel_efficiency_fifty_percent"
+    ]
+
+    picked_workflow = ""
+    for workflow in workflows:
+        if "bwa" in workflow:
+            picked_workflow = workflow
+            break
+
+    max_individual_time = 0
+    for task_selection_scheme in task_selection_schemes:
+        for cluster_selection_scheme in cluster_selection_schemes:
+            for core_selection_scheme in core_selection_schemes:
+                command = f"/usr/bin/time -v scheduling_using_simulation_simulator --algorithm_selection_scheme makespan  --cluster_selection_schemes {cluster_selection_scheme} --clusters {platform} --core_selection_schemes {core_selection_scheme} --task_selection_schemes {task_selection_scheme} --first_scheduler_change_trigger 0 --periodic_scheduler_change_trigger 1.0 --reference_flops 3.21Gf --wrench-energy-simulation --simulation_noise_scheme micro-platform --speculative_work_fraction 1.0 --workflow {workflow}"
+                t0 = time.time()
+                child = subprocess.Popen(command.split(" "))
+                child.wait()
+                t1 = time.time()
+                total = t1-t0
+                max_individual_time = max(max_individual_time, total)
+    print(f"MAX INDIVIFUAL TIME: {max_individual_time:.2f}")
+
+    children = []
+    t0 = time.time()
+    for task_selection_scheme in task_selection_schemes:
+        for cluster_selection_scheme in cluster_selection_schemes:
+            for core_selection_scheme in core_selection_schemes:
+                command = f"/usr/bin/time -v scheduling_using_simulation_simulator --algorithm_selection_scheme makespan  --cluster_selection_schemes {cluster_selection_scheme} --clusters {platform} --core_selection_schemes {core_selection_scheme} --task_selection_schemes {task_selection_scheme} --first_scheduler_change_trigger 0 --periodic_scheduler_change_trigger 1.0 --reference_flops 3.21Gf --wrench-energy-simulation --simulation_noise_scheme micro-platform --speculative_work_fraction 1.0 --workflow {workflow}"
+                children.append(subprocess.Popen(command.split(" ")))
+
+    for child in children:
+        child.wait()
+
+    t1 = time.time()
+    total = t1-t0
+    print(f"PARALLEL TIME: {total:.2f}")
+
 
 if __name__ == "__main__":
     main()

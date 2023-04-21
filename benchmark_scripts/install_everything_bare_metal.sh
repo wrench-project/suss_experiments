@@ -22,6 +22,7 @@ mkdir build
 cd build/
 cmake ..
 make -j48
+sudo make install
 cd ../..
 
 git clone https://github.com/wrench-project/wrench.git

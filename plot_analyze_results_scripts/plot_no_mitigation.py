@@ -86,7 +86,7 @@ def plot_no_mitigation(plot_path, results_dict, best_algorithm_on_average):
 
     pos = x_ticks[0]
     for base_noise in flats:
-        plot_violin(ax1, pos, 0.6, flats[base_noise], "yellow", 0.9)
+        plot_violin(ax1, pos, 0.6, flats[base_noise], "skyblue", 0.9)
         percentage_above = 100.0 * len([x for x in flats[base_noise] if x > best_algorithm_on_average_ave_dfb]) / len(flats[base_noise])
         plt.text(pos -0.05, best_algorithm_on_average_ave_dfb + 0.3, "{:.2f}".format(round(percentage_above, 2)) + "%", fontsize=fontsize-3)
         plt.text(pos -0.05, best_algorithm_on_average_ave_dfb - 0.9, "{:.2f}".format(round(100 - percentage_above, 2)) + "%", fontsize=fontsize-3)

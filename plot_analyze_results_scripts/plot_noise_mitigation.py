@@ -203,12 +203,12 @@ def plot_single_noise_line(results_dict, base_noise, target_noise, best_algorith
 	for i in range(len(transpose)):
 		line = transpose[i]["ranks"][len(transpose[i]["ranks"]) // 2]
 		if len(transpose[i]["points"]) != 0:
-			plot_violin(ax1, pos, .8, transpose[i]["points"], "yellow", 0.9)
+			plot_violin(ax1, pos, .8, transpose[i]["points"], "skyblue", 0.9)
 			pos += 1
 		#print("workform:",x_ticklabels[i],"average=",average(transpose[i]["points"]))
 	# Legend
 	legend_elements = [Line2D([0], [0], color="red", lw=2, label='One-algorithm approach'),
-					   Patch(facecolor='yellow', edgecolor='w', label='Portfolio approach')]
+					   Patch(facecolor='skyblue', edgecolor='w', label='Portfolio approach')]
 
 	plt.legend(handles=legend_elements, loc='upper center', fontsize=fontsize)
 

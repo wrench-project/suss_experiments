@@ -1,3 +1,5 @@
+# On Ubuntu
+
 sudo apt update
 sudo apt install -y libboost-program-options-dev
 sudo apt install -y cmake

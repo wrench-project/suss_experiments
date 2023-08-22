@@ -23,17 +23,17 @@ ENV CXX="g++" CC="gcc"
 WORKDIR /tmp
 
 # install SimGrid
-RUN git clone https://framagit.org/simgrid/simgrid.git && cd simgrid && git checkout dbb4b9d8b72ec01fe1748a7eb6b32222ffe3ece5 && mkdir build && cd build && cmake .. && make -j12 && sudo make install && cd ../.. && rm -rf simgrid
+RUN wget --no-check-certificate https://framagit.org/simgrid/simgrid/-/archive/v3.34/simgrid-v3.34.tar.gz && tar -xf simgrid-v3.34.tar.gz && cd simgrid-v3.34 && cmake . && make -j12 && sudo make install && cd .. && rm -rf simgrid-v3.34*
 
 
 # install json for modern c++
 RUN wget https://github.com/nlohmann/json/archive/refs/tags/v3.10.5.tar.gz && tar -xf v3.10.5.tar.gz && cd json-3.10.5 && cmake . && make -j4 && make install && cd .. && rm -rf v3.10.5* json-3.10.5
 
 # install WRENCH
-RUN git clone https://github.com/wrench-project/wrench.git  && cd wrench && git checkout master && cmake . && make -j4 && sudo make install && cd .. && rm -rf wrench
+RUN git clone https://github.com/wrench-project/wrench.git  && cd wrench && git checkout 99400dae4a7414651464b38afc8034d687d5c16f && cmake . && make -j4 && sudo make install && cd .. && rm -rf wrench
 
 # clone and install the scheduling_with_simulations_simulator with the right commit tab
-RUN git clone https://github.com/wrench-project/scheduling_using_simulation_simulator.git && cd scheduling_using_simulation_simulator && git checkout main && mkdir build && cd build && cmake .. && make -j4 && sudo make install && cd ../.. && /bin/rm -rf scheduling_using_simulation_simulator/
+RUN git clone https://github.com/wrench-project/scheduling_using_simulation_simulator.git && cd scheduling_using_simulation_simulator && git checkout 035aab4a7be477f510365a8a2b9c255d685506e7 && mkdir build && cd build && cmake .. && make -j4 && sudo make install && cd ../.. && /bin/rm -rf scheduling_using_simulation_simulator/
 
 # install pip
 RUN wget https://bootstrap.pypa.io/get-pip.py && python3 get-pip.py && /bin/rm get-pip.py

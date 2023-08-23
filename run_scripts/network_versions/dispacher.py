@@ -54,7 +54,7 @@ def main():
 	try:
 		version = sys.argv[1]
 
-		if version == "v3":
+		if version in ["v3","v4"]:
 			file_factor = " --file_size_factor 1.0 "
 			platform_configurations = [
 				"48:10:3.21Gf:1:100Gbps:10Gbps",

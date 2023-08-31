@@ -150,8 +150,8 @@ def plot_no_contention_noise(plot_path, results_dict, best_algorithm_on_average,
 
 
 	# Set y-axis limits
-	ax1.set_ylim([0,80])
-	ax2.set_ylim([0,10])
+	ax1.set_ylim([0,5])
+	ax2.set_ylim([0,50])
 
 	# Set colors for each workflow
 	colors = {}
@@ -163,20 +163,24 @@ def plot_no_contention_noise(plot_path, results_dict, best_algorithm_on_average,
 	#print(averages.keys())
 	#return
 	# Plot first dataset on top subplot
-	colors['srasearch-chameleon-10a-003.json'] = "red"
-	colors['bwa-chameleon-large-003.json'] = "royalblue"
-	colors['epigenomics-chameleon-ilmn-4seq-50k-001.json'] = "darkorange"
+	#workflow1 = "1000genome-chameleon-8ch-250k-001.json"
+	#workflow2 = "epigenomics-chameleon-ilmn-4seq-50k-001.json"
+	#workflow3 = "srasearch-chameleon-10a-003.json"
+
+	colors[workflows[0]] = "red"
+	colors[workflows[1]] = "royalblue"
+	colors[workflows[2]] = "darkorange"
     
 
 	workflow_indices = {}
-	workflow_indices['srasearch-chameleon-10a-003.json'] = 8
-	workflow_indices['bwa-chameleon-large-003.json'] = 3
-	workflow_indices['epigenomics-chameleon-ilmn-4seq-50k-001.json'] = 5
+	workflow_indices[workflows[0]] = 8
+	workflow_indices[workflows[1]] = 3
+	workflow_indices[workflows[2]] = 5
 
 	# Invert x-axis
 	ax1.invert_xaxis()
-	ax1.set_yticks([0,20,40,60,80])
-	dataset1='srasearch-chameleon-10a-003.json'
+	#ax1.set_yticks([0,20,40,60,80])
+	dataset1=workflows[0]
 	ax1.errorbar(range(0, len(averages[dataset1]["noise"])),
 				 averages[dataset1]["noise"],
 				 yerr=errors[dataset1]["noise"],
@@ -215,7 +219,7 @@ def plot_no_contention_noise(plot_path, results_dict, best_algorithm_on_average,
 				 linestyle='None',
 				 ecolor='black',zorder=11)
 	# Plot other two datasets on bottom subplot
-	for workflow in ['bwa-chameleon-large-003.json', 'epigenomics-chameleon-ilmn-4seq-50k-001.json']:
+	for workflow in [workflows[1], workflows[2]]:
 		ax2.errorbar(range(0, len(averages[workflow]["noise"])),
 					 averages[workflow]["noise"],
 					 yerr=errors[workflow]["noise"],
@@ -289,12 +293,12 @@ if __name__ == "__main__":
 		sys.stderr.write("Usage: " + sys.argv[0] + " <version>\n")
 		sys.exit(1)
 
-	sys.stdout.write("\n# NO CONTENTION (IDEAL) RESULTS \n")
-	sys.stdout.write("#######################\n")
-	plot_path, result_dicts, workflows, clusters, best_algorithm_on_average = importData(sys.argv[1], 1)
-	plot_no_contention_ideal(plot_path, result_dicts, best_algorithm_on_average)
+	#sys.stdout.write("\n# NO CONTENTION (IDEAL) RESULTS \n")
+	#sys.stdout.write("#######################\n")
+	#plot_path, result_dicts, workflows, clusters, best_algorithm_on_average = importData(sys.argv[1], 1)
+	#plot_no_contention_ideal(plot_path, result_dicts, best_algorithm_on_average)
 	sys.stdout.write("\n# NO CONTENTION (NOISE) PLOT \n")
 	sys.stdout.write("#######################\n")
 	plot_path, result_dicts, workflows, clusters, best_algorithm_on_average = importData(sys.argv[1], 1)
-	plot_no_contention_noise(plot_path, result_dicts, best_algorithm_on_average,["srasearch-chameleon-10a-003.json", "bwa-chameleon-large-003.json", "epigenomics-chameleon-ilmn-4seq-50k-001.json"])
+	plot_no_contention_noise(plot_path, result_dicts, best_algorithm_on_average,["1000genome-chameleon-8ch-250k-001.json","epigenomics-chameleon-ilmn-4seq-50k-001.json","srasearch-chameleon-10a-003.json"])
 	

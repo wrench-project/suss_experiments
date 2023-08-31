@@ -72,17 +72,18 @@ def main():
 	plot_cumulative_rank_histograms(plot_path, result_dicts, start_noises)
 
 	# no Contention ideal
-	sys.stdout.write("\n# NO CONTENTION (IDEAL) PLOTS\n")
-	sys.stdout.write("########################\n")
-	start_noises = [0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0]
-	
-	plot_no_contention_ideal(plot_path, result_dicts, best_algorithm_on_average)
+	#sys.stdout.write("\n# NO CONTENTION (IDEAL) PLOTS\n")
+	#sys.stdout.write("########################\n")
+	#start_noises = [0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0]
+#	
+#	plot_no_contention_ideal(plot_path, result_dicts, best_algorithm_on_average)
 	
 	# no Contention noise
 	sys.stdout.write("\n# NO CONTENTION (NOISE) PLOTS\n")
 	sys.stdout.write("########################\n")
 	start_noises = [0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0]
-	plot_no_contention_noise(plot_path, result_dicts, best_algorithm_on_average,["srasearch-chameleon-10a-003.json","bwa-chameleon-large-003.json","epigenomics-chameleon-ilmn-4seq-50k-001.json"])
+	#plot_no_contention_noise(plot_path, result_dicts, best_algorithm_on_average,["srasearch-chameleon-10a-003.json","bwa-chameleon-large-003.json","epigenomics-chameleon-ilmn-4seq-50k-001.json"])
+	plot_no_contention_noise(plot_path, result_dicts, best_algorithm_on_average,["1000genome-chameleon-8ch-250k-001.json","epigenomics-chameleon-ilmn-4seq-50k-001.json","srasearch-chameleon-10a-003.json"])
 	
 # MAIN
 if __name__ == "__main__":

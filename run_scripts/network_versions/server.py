@@ -177,6 +177,7 @@ def connectionThread(c,addr,mydb):
 			elif (command=="COUNT"):
 				with todoLock:
 					print("TODO "+str(len(todo)))
+					c.send(("TODO "+str(len(todo))).encode('utf-8'))
 			else:
 				print("	unknown command: " + str(rec["cmd"]) + str(rec))
 	finally:			

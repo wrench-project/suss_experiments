@@ -55,7 +55,7 @@ def main():
 		version = sys.argv[1]
 
 		if version in ["v3","v4"]:
-			file_factor = " --file_size_factor 1.0 "
+			#file_factor = " --file_size_factor 1.0 "
 			platform_configurations = [
 				"48:10:3.21Gf:1:100Gbps:10Gbps",
 				"48:10:3.21Gf:1:100Gbps:10Gbps,32:16:4.0125Gf:1:100Gbps:7Gbps",
@@ -74,7 +74,13 @@ def main():
 
 		platform_configs = [int(x) for x in sys.argv[4].split(",")]
 		workflow_configs = [int(x) for x in sys.argv[5].split(",")]
-
+		file_factor_arg="--file-factors" in sys.argv
+		if file_factor_arg:
+			idx = sys.argv.index("--file-factors")
+			file_factors=[x for x in sys.argv[idx+1].split(",")]
+		else:
+			file_factors=["1.0"]
+		
 		run_ideal = "--run-ideal" in sys.argv
 		
 		no_contention = "--no-contention" in sys.argv
@@ -84,11 +90,6 @@ def main():
 
 		run_ideal_multi_adaptation = "--run-ideal-multi-adaptation" in sys.argv
 
-		run_noise = "--run-noise" in sys.argv
-		if run_noise:
-			idx = sys.argv.index("--run-noise")
-			start_seed = int(sys.argv[idx + 1])
-			end_seed = int(sys.argv[idx + 2])
 			
 		run_mitigation = "--run-mitigation" in sys.argv	
 
@@ -116,6 +117,7 @@ def main():
 						 "[--run-ideal-multi-adaptation] "
 						 "[--run-noise <start seed> <end seed (inclusive)>] "
 						 "[--pre-validate <mongo url>]"
+						 "[--file-factors <factors list>]"
 						 "[--pause]"
 						 "\n\n")
 		sys.stderr.write("Example: " + sys.argv[0] + " v3 128.171.140.102:443 ../.. 0,1,2 0,1 --run-ideal "
@@ -163,77 +165,104 @@ def main():
 	###############################
 	xps = []
 
-	base_command = "scheduling_using_simulation_simulator "
-	base_command += file_factor
-	base_command += " --reference_flops 3.21Gf --wrench-energy-simulation "
-	base_command += " --first_scheduler_change_trigger 0.00 "
-	base_command += " --simulation_noise_scheme micro-platform "
-	base_command += " --speculative_work_fraction 1.0 "
-	base_command += " --algorithm_selection_scheme makespan "
-	base_command += " --wrench-mailbox-pool-size=50000"
-	base_command += " --cfg=maxmin/precision:0.001"
+	base_base_command = "scheduling_using_simulation_simulator "
+	base_base_command += " --reference_flops 3.21Gf --wrench-energy-simulation "
+	base_base_command += " --first_scheduler_change_trigger 0.00 "
+	base_base_command += " --simulation_noise_scheme micro-platform "
+	base_base_command += " --speculative_work_fraction 1.0 "
+	base_base_command += " --algorithm_selection_scheme makespan "
+	base_base_command += " --wrench-mailbox-pool-size=50000"
+	base_base_command += " --cfg=maxmin/precision:0.001"
 
 	if no_contention:
-		base_command += " --no-contention "
+		base_base_command += " --no-contention "
 		
 	if no_contention_in_speculative_executions:
-		base_command += " --no-contention-in-speculative-executions "
+		base_base_command += " --no-contention-in-speculative-executions "
 
 	commands_to_run = []
-	for platform_config_index in platform_configs:
-		platform = platform_configurations[platform_config_index]
-		platform_spec = " --clusters " + platform + " "
+	for file_factor in file_factors:
+		base_command=base_base_command+" --file_size_factor "+file_factor+" "
+		
+	
+		for platform_config_index in platform_configs:
+			platform = platform_configurations[platform_config_index]
+			platform_spec = " --clusters " + platform + " "
 
-		# Loop over all workflows
-		for workflow_config in workflow_configs:
-			workflow_spec = " --workflow " + workflow_dir + workflow_json_files[workflow_config] + " "
+			# Loop over all workflows
+			for workflow_config in workflow_configs:
+				workflow_spec = " --workflow " + workflow_dir + workflow_json_files[workflow_config] + " "
 
-			if run_ideal:
-				# RUN INDIVIDUAL ALGORITHMS
-				for task_selection_scheme in task_selection_schemes:
-					for cluster_selection_scheme in cluster_selection_schemes:
-						for core_selection_scheme in core_selection_schemes:
-							command = base_command + platform_spec + workflow_spec
-							command += " --periodic_scheduler_change_trigger 0.1 "  # useless here of course
-							command += " --task_selection_scheme " + str(task_selection_scheme)
-							command += " --cluster_selection_scheme " + str(cluster_selection_scheme)
-							command += " --core_selection_scheme " + str(core_selection_scheme)
-							commands_to_run.append((command, version))
+				if run_ideal:
+					# RUN INDIVIDUAL ALGORITHMS
+					for task_selection_scheme in task_selection_schemes:
+						for cluster_selection_scheme in cluster_selection_schemes:
+							for core_selection_scheme in core_selection_schemes:
+								command = base_command + platform_spec + workflow_spec
+								command += " --periodic_scheduler_change_trigger 0.1 "  # useless here of course
+								command += " --task_selection_scheme " + str(task_selection_scheme)
+								command += " --cluster_selection_scheme " + str(cluster_selection_scheme)
+								command += " --core_selection_scheme " + str(core_selection_scheme)
+								commands_to_run.append((command, version))
 
-			if run_ideal_multi_adaptation:
-				# RUN ADAPTATION STUFF
-				command = base_command + platform_spec + workflow_spec
-				command += " --simulation_noise 0.0 "
-				command += " --periodic_scheduler_change_trigger 0.1 "
-				command += " --task_selection_scheme " + ",".join(task_selection_schemes) + " "
-				command += " --cluster_selection_scheme " + ",".join(cluster_selection_schemes) + " "
-				command += " --core_selection_scheme " + ",".join(core_selection_schemes) + " "
-				commands_to_run.append((command, version))
+				if run_ideal_multi_adaptation:
+					# RUN ADAPTATION STUFF
+					command = base_command + platform_spec + workflow_spec
+					command += " --simulation_noise 0.0 "
+					command += " --periodic_scheduler_change_trigger 0.1 "
+					command += " --task_selection_scheme " + ",".join(task_selection_schemes) + " "
+					command += " --cluster_selection_scheme " + ",".join(cluster_selection_schemes) + " "
+					command += " --core_selection_scheme " + ",".join(core_selection_schemes) + " "
+					commands_to_run.append((command, version))
 
-				command = base_command + platform_spec + workflow_spec
-				command += " --simulation_noise 0.0 "
-				command += " --periodic_scheduler_change_trigger 0.1 "
-				command += " --simulation_noise_reduction 0.0 "
-				command += " --adapt-only-if-noise-has-changed "
-				command += " --task_selection_scheme " + ",".join(task_selection_schemes) + " "
-				command += " --cluster_selection_scheme " + ",".join(cluster_selection_schemes) + " "
-				command += " --core_selection_scheme " + ",".join(core_selection_schemes) + " "
-				commands_to_run.append((command, version))
+					command = base_command + platform_spec + workflow_spec
+					command += " --simulation_noise 0.0 "
+					command += " --periodic_scheduler_change_trigger 0.1 "
+					command += " --simulation_noise_reduction 0.0 "
+					command += " --adapt-only-if-noise-has-changed "
+					command += " --task_selection_scheme " + ",".join(task_selection_schemes) + " "
+					command += " --cluster_selection_scheme " + ",".join(cluster_selection_schemes) + " "
+					command += " --core_selection_scheme " + ",".join(core_selection_schemes) + " "
+					commands_to_run.append((command, version))
 
-			if run_noise:
-				# RUN ONE ADAPTATION WITH NOISE, BUT NOT ADAPTING IF NOISE HAS NOT CHANGED
-				noises = ["1.0", "0.9", "0.8", "0.7", "0.6", "0.5", "0.4", "0.3", "0.2", "0.1", "0.0"]
-				base = ["1.0", "0.9", "0.8", "0.7", "0.6", "0.5", "0.4", "0.3", "0.2", "0.1", "0.0"]
-				
-				for start_noise_index in range(0, len(noises)):
-					if run_mitigation:
-						noise_reductions = base[start_noise_index:-1]
-					else:
-						noise_reductions = ["0.0"]
-						
-					for noise_reduction_index in range(len(noise_reductions)):
+				if run_noise:
+					# RUN ONE ADAPTATION WITH NOISE, BUT NOT ADAPTING IF NOISE HAS NOT CHANGED
+					noises = ["1.0", "0.9", "0.8", "0.7", "0.6", "0.5", "0.4", "0.3", "0.2", "0.1", "0.0"]
+					base = ["1.0", "0.9", "0.8", "0.7", "0.6", "0.5", "0.4", "0.3", "0.2", "0.1", "0.0"]
+					
+					for start_noise_index in range(0, len(noises)):
+						if run_mitigation:
+							noise_reductions = base[start_noise_index:-1]
+						else:
+							noise_reductions = ["0.0"]
+							
+						for noise_reduction_index in range(len(noise_reductions)):
+							start_noise = noises[start_noise_index]
+							noise_reduction = noise_reductions[noise_reduction_index]
+
+							if start_noise == "0.0":
+								seed_range = [42]
+							else:
+								seed_range = range(start_seed, end_seed + 1)
+
+							for seed in seed_range:
+								command = base_command + platform_spec + workflow_spec
+								command += " --periodic_scheduler_change_trigger 0.1 "
+								command += " --simulation_noise " + str(start_noise) + " "
+								command += " --simulation_noise_seed " + str(seed) + " "
+								command += " --simulation_noise_reduction " + str(noise_reduction) + " "
+								command += " --adapt-only-if-noise-has-changed "
+								command += " --at-most-one-noise-reduction "
+								command += " --at-most-one-adaptation "
+								command += " --task_selection_scheme " + ",".join(task_selection_schemes) + " "
+								command += " --cluster_selection_scheme " + ",".join(cluster_selection_schemes) + " "
+								command += " --core_selection_scheme " + ",".join(core_selection_schemes) + " "
+								commands_to_run.append((command, version))
+
+					# RUN ONE ADAPTATION FOR CASES IN WHICH NOISE HAS NOT CHANGED!
+					for start_noise_index in range(0, len(noises)):
 						start_noise = noises[start_noise_index]
-						noise_reduction = noise_reductions[noise_reduction_index]
+						noise_reduction = "0.0"
 
 						if start_noise == "0.0":
 							seed_range = [42]
@@ -246,37 +275,13 @@ def main():
 							command += " --simulation_noise " + str(start_noise) + " "
 							command += " --simulation_noise_seed " + str(seed) + " "
 							command += " --simulation_noise_reduction " + str(noise_reduction) + " "
-							command += " --adapt-only-if-noise-has-changed "
-							command += " --at-most-one-noise-reduction "
+							# command += " --adapt-only-if-noise-has-changed "
 							command += " --at-most-one-adaptation "
+							command += " --at-most-one-noise-reduction "
 							command += " --task_selection_scheme " + ",".join(task_selection_schemes) + " "
 							command += " --cluster_selection_scheme " + ",".join(cluster_selection_schemes) + " "
 							command += " --core_selection_scheme " + ",".join(core_selection_schemes) + " "
 							commands_to_run.append((command, version))
-
-				# RUN ONE ADAPTATION FOR CASES IN WHICH NOISE HAS NOT CHANGED!
-				for start_noise_index in range(0, len(noises)):
-					start_noise = noises[start_noise_index]
-					noise_reduction = "0.0"
-
-					if start_noise == "0.0":
-						seed_range = [42]
-					else:
-						seed_range = range(start_seed, end_seed + 1)
-
-					for seed in seed_range:
-						command = base_command + platform_spec + workflow_spec
-						command += " --periodic_scheduler_change_trigger 0.1 "
-						command += " --simulation_noise " + str(start_noise) + " "
-						command += " --simulation_noise_seed " + str(seed) + " "
-						command += " --simulation_noise_reduction " + str(noise_reduction) + " "
-						# command += " --adapt-only-if-noise-has-changed "
-						command += " --at-most-one-adaptation "
-						command += " --at-most-one-noise-reduction "
-						command += " --task_selection_scheme " + ",".join(task_selection_schemes) + " "
-						command += " --cluster_selection_scheme " + ",".join(cluster_selection_schemes) + " "
-						command += " --core_selection_scheme " + ",".join(core_selection_schemes) + " "
-						commands_to_run.append((command, version))
 
 	###################################
 	# RUN STUFF

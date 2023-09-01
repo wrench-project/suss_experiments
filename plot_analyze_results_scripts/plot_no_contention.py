@@ -2,7 +2,7 @@
 #import warnings
 #warnings.filterwarnings("error")
 from plot_utils import *
-
+from mappings import workflow_indices
 
 def plot_no_contention_ideal(plot_path, results_dict, best_algorithm_on_average):
 	baseline = results_dict["basic_algorithms"]
@@ -37,7 +37,7 @@ def plot_no_contention_noise(plot_path, results_dict, best_algorithm_on_average,
 		noReduction = noiseV[base_noise][base_noise]
 		noContention= contentionV[base_noise][base_noise]
 
-		for workflow in workflows:
+		for workflow in noContention:
 			if not workflow in noReduction or not workflow in noContention:
 				continue
 			for platform in noNoise[workflow]:
@@ -118,10 +118,78 @@ def plot_no_contention_noise(plot_path, results_dict, best_algorithm_on_average,
 			finalErrors[workflow]["noise"][i]=	errors[workflow][key]["noise"]
 			finalAverages[workflow]["noContention"][i]=averages[workflow][key]["noContention"]
 			finalErrors[workflow]["noContention"][i]=	errors[workflow][key]["noContention"]
+			
 	averages=finalAverages
 	errors=finalErrors
-	fontsize = 18
+	
+	#print(averages)
+	#print(errors)
+	for workflow in averages:
+		fontsize = 18
+		output_filename = plot_path +"no_contention_"+workflow+".pdf"
+		f, ax1 = plt.subplots(1, 1, sharey=True, figsize=(12, 6))
+		ax1.yaxis.grid()
+		display_width = 0.027
 
+		handles = []
+		x_value = 0.1
+		x_ticks = []
+		x_ticklabels = []
+
+		ax1.set_xticks(x_ticks)
+		ax1.set_xticklabels(x_ticklabels, rotation=45, fontsize=fontsize - 2)
+
+		ax1.set_ylabel("% makespan improvement", fontsize=fontsize)
+		ax1.set_xlabel("Workflow", fontsize=fontsize)
+
+		# Create the figure
+
+		plt.yticks(fontsize=fontsize)
+		f.tight_layout()
+		#ax1.plot(range(len(line)), line, '.', linewidth=2, color=colors[j])
+		ax1.invert_xaxis()
+		#ax1.set_yticks([0,20,40,60,80])
+		ax1.errorbar(range(0, len(averages[workflow]["noise"])),
+					 averages[workflow]["noise"],
+					 yerr=errors[workflow]["noise"],
+					 capsize=5,
+					 color='red',
+					 linewidth=3,
+					 elinewidth=1,
+					 label="$W_" + str(workflow_indices[workflow]) + "$ WithContention",
+					 ecolor='black',zorder=10)
+		ax1.errorbar(range(0, len(averages[workflow]["noise"])),
+					 averages[workflow]["noise"],
+					 yerr=errors[workflow]["noise"],
+					 capsize=5,
+					 color='red',
+					 linewidth=3,
+					 elinewidth=1,
+					 linestyle='None',
+					 ecolor='black',zorder=11)			 
+		ax1.errorbar(range(0, len(averages[workflow]["noContention"])),
+					 averages[workflow]["noContention"],
+					 yerr=errors[workflow]["noContention"],
+					 capsize=5,
+					 linewidth=3,
+					 elinewidth=1,
+					 color='red',
+					 linestyle='dashed',
+					 label="$W_" + str(workflow_indices[workflow]) + "$ WithoutContention",
+					 ecolor='black',zorder=10)
+		ax1.errorbar(range(0, len(averages[workflow]["noContention"])),
+					 averages[workflow]["noContention"],
+					 yerr=errors[workflow]["noContention"],
+					 capsize=5,
+					 linewidth=3,
+					 elinewidth=1,
+					 color='red',
+					 linestyle='None',
+					 ecolor='black',zorder=11)
+		plt.savefig(output_filename)
+		plt.close()
+		sys.stdout.write("Generated plot '" + output_filename + "'\n")
+"""
 	# Create the figure and subplots
 	f, (ax1, ax2) = plt.subplots(2, 1, sharex=True,sharey=False, figsize=(12, 6))
 	#f.subplots_adjust(hspace=0.2)
@@ -285,7 +353,7 @@ def plot_no_contention_noise(plot_path, results_dict, best_algorithm_on_average,
 	plt.close()
 	sys.stdout.write("Generated plot '" + output_filename + "'\n")
 #print(averages)
-
+"""
 
 
 if __name__ == "__main__":

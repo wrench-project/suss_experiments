@@ -196,7 +196,8 @@ def cleanCache(lastCleanup):
 			
 			for key in dispatched:
 				if (dispatched[key]["time"] < lastCleanup):
-					todo.append(dispatched[key]["request"])
+					data=dispatched[key]["request"]
+					todo.append(data)
 					dispatched.pop(data)
 			#print("LOCK 192 ds release")
 		#print("LOCK 194 todo release")
@@ -249,4 +250,5 @@ if __name__ == "__main__":
 		pass
 	except OSError as e:
 		print(e)
-		
+	except NameError as e:
+		print(e)

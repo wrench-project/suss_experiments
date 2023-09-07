@@ -153,7 +153,7 @@ def compute_adfb(results_dict, workflow, platform, base_noise, target_noise):
 ###################################
 def importData(version, verbosity=2):
 	plot_path = "plots_" + version + "/"
-	file_factor=1
+
 	# Read extracted files in to a dictionary of results
 	extracted_files = {"basic_algorithms": "../extract_scripts/basic_algorithms_extracted_results_" + version + ".dict",
 					   "multi_adaptation": "../extract_scripts/multi_adaptation_results_" + version + ".dict",
@@ -173,8 +173,8 @@ def importData(version, verbosity=2):
 		result_dicts[f] = ast.literal_eval(contents)
 
 	# Identify the workflows and the clusters, in sorted lists
-	workflows = sorted(result_dicts[file_factor]["basic_algorithms"].keys())  # sorted lexicographically
-	clusters = sorted(result_dicts[file_factor]["basic_algorithms"][workflows[0]].keys(), key=lambda x: len(x))  # sorted by length
+	workflows = sorted(result_dicts["basic_algorithms"].keys())  # sorted lexicographically
+	clusters = sorted(result_dicts["basic_algorithms"][workflows[0]].keys(), key=lambda x: len(x))  # sorted by length
 
 	# Create workflows and clusters numbering maps
 	for idx in range(0, len(workflows)):
@@ -186,7 +186,7 @@ def importData(version, verbosity=2):
 		sys.stdout.write("\n# BASIC ALGORITHM DFB STATISTICS\n")
 		sys.stdout.write("################################\n")
 
-	best_algorithm_on_average = print_dfb_statistics(result_dicts[file_factor]["basic_algorithms"], verbosity)
+	best_algorithm_on_average = print_dfb_statistics(result_dicts["basic_algorithms"], verbosity)
 	if verbosity > 0:
 		sys.stderr.write("\nBest algorithm on average = " + best_algorithm_on_average + "\n")
 

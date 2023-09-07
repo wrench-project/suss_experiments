@@ -90,6 +90,7 @@ def plot_no_contention_noise(plot_path, results_dict, file_factor, best_algorith
 				std_error=0;
 			else:
 				std_error = np.std(flats[workflow][base_noise]["noise"], ddof=1) / np.sqrt(len(flats[workflow][base_noise]["noise"]))
+			print(workflow,base_noise,file_factor,flats[workflow][base_noise]["noise"])
 			average = sum(flats[workflow][base_noise]["noise"]) / len(flats[workflow][base_noise]["noise"])
 			averages[workflow][base_noise]["noise"]=average
 			errors[workflow][base_noise]["noise"]=std_error
@@ -368,7 +369,7 @@ if __name__ == "__main__":
 	#plot_no_contention_ideal(plot_path, result_dicts, best_algorithm_on_average)
 	sys.stdout.write("\n# NO CONTENTION (NOISE) PLOT \n")
 	sys.stdout.write("#######################\n")
-	file_factors=[1,10,100,1000]
+	file_factors=[1,10,100]
 	allResults=[]
 	plot_path, result_dicts, workflows, clusters, best_algorithm_on_average = importData(sys.argv[1], file_factor,1)
 	for factor in file_factors:

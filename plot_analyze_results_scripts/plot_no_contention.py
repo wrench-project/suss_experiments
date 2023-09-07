@@ -20,7 +20,7 @@ def plot_no_contention_ideal(plot_path, results_dict, best_algorithm_on_average)
 
 
 def plot_no_contention_noise(plot_path, results_dict, file_factor, best_algorithm_on_average, workflows):
-	results_dict=results_dict[factor]
+	results_dict=results_dict[file_factor]
 	# (Re) Compute the dfb of the best_algorithm_on_average
 	noNoise = results_dict["basic_algorithms"]
 

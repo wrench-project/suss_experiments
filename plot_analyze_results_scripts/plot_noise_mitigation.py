@@ -235,7 +235,7 @@ if __name__ == "__main__":
 	if len(sys.argv) != 2:
 		sys.stderr.write("Usage: " + sys.argv[0] + " <version>\n")
 		sys.exit(1)
-	file_factor=1
+
 	plot_path, result_dicts, workflows, clusters, best_algorithm_on_average = importData(sys.argv[1], 1)
 	# Generate the noise violin plots for all cases
 	sys.stdout.write("\n# ERROR PLOTS\n")
@@ -248,7 +248,7 @@ if __name__ == "__main__":
 		mean_max_values[start_noise] = {}
 		for end_noise_index in range(0, start_noise_index + 1):
 			end_noise = start_noises[end_noise_index]
-			mean_max_values[start_noise][end_noise] = plot_single_noise_line(result_dicts[file_factor], start_noise, end_noise, best_algorithm_on_average,
+			mean_max_values[start_noise][end_noise] = plot_single_noise_line(result_dicts, start_noise, end_noise, best_algorithm_on_average,
 								   plot_path + "dfb_all_all_scenario_noise_" + str(start_noise) + "_mitigitated_noise_" + str(end_noise) + ".pdf")
 
 	# Print some statistics needed in the paper

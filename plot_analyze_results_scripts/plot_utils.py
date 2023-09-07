@@ -170,7 +170,7 @@ def importData(version, verbosity=2):
                              "'. Start Mongo and run the extract_all_results.py script first!\n")
             sys.exit(1)
         contents = file.read()
-        result_dicts[f] = ast.literal_eval(contents)
+        result_dicts[f] = ast.literal_eval(contents)[1]
 
     # Identify the workflows and the clusters, in sorted lists
     workflows = sorted(result_dicts["basic_algorithms"].keys())  # sorted lexicographically

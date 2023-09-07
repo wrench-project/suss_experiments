@@ -175,5 +175,4 @@ if __name__ == "__main__":
     sys.stdout.write("\n# RANK HISTOGRAM PLOTS\n")
     sys.stdout.write("#############\n")
     start_noises = [0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0]
-	file_factor=1
-    plot_cumulative_rank_histograms(plot_path, result_dicts[file_factor], start_noises)
+    plot_cumulative_rank_histograms(plot_path, result_dicts, start_noises)

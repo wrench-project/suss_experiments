@@ -112,8 +112,8 @@ if __name__ == "__main__":
         sys.exit(1)
 
     plot_path, result_dicts, workflows, clusters, best_algorithm_on_average = importData(sys.argv[1], 1)
-	file_factor=1
+
     # No mitigation results
     sys.stdout.write("\n# NO MITIGATION PLOT \n")
     sys.stdout.write("#######################\n")
-    plot_no_mitigation(plot_path, result_dicts[file_factor], best_algorithm_on_average)
+    plot_no_mitigation(plot_path, result_dicts, best_algorithm_on_average)

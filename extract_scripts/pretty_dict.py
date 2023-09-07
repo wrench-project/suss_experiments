@@ -3,8 +3,6 @@ import sys
 import ast
 
 
-contents = file.read()
-pretty_dict(contents)
 def pretty_dict(contents):
 	contents=str(contents)
 	output=""
@@ -49,3 +47,6 @@ if __name__ == "__main__":
 	except OSError:
 		sys.stderr.write("Could not open \""+input_file_name+"\"");
 		sys.exit(1)
+			
+	contents = file.read()
+	pretty_dict(contents)

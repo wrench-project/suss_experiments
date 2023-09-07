@@ -121,8 +121,8 @@ if __name__ == "__main__":
 	if len(sys.argv) != 2:
 		sys.stderr.write("Usage: " + sys.argv[0] + " <version>\n")
 		sys.exit(1)
-
-	plot_path, result_dicts, workflows, clusters, best_algorithm_on_average = importData(sys.argv[1], 2)
+	file_factor=1
+	plot_path, result_dicts, workflows, clusters, best_algorithm_on_average = importData(sys.argv[1],file_factor, 2)
 	sys.stdout.write("\n# BASIC ALGORITHMS PLOT\n")
 	sys.stdout.write("#######################\n")
 	generate_basic_algorithms_plot(plot_path, result_dicts["basic_algorithms"], best_algorithm_on_average)

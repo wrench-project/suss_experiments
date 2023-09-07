@@ -19,7 +19,8 @@ def plot_no_contention_ideal(plot_path, results_dict, best_algorithm_on_average)
 			print(round(dgfb(realBest,baseline[workflow][platform][best]),2),workflow,platform)
 
 
-def plot_no_contention_noise(plot_path, results_dict, best_algorithm_on_average, workflows):
+def plot_no_contention_noise(plot_path, results_dict, file_factor, best_algorithm_on_average, workflows):
+	results_dict=results_dict[factor]
 	# (Re) Compute the dfb of the best_algorithm_on_average
 	noNoise = results_dict["basic_algorithms"]
 
@@ -126,7 +127,7 @@ def plot_no_contention_noise(plot_path, results_dict, best_algorithm_on_average,
 	#print(errors)
 	for workflow in averages:
 		fontsize = 18
-		output_filename = plot_path +"no_contention_"+workflow+".pdf"
+		output_filename = plot_path +"no_contention_"+workflow+"_filefactor_"+str(file_factor)+".pdf"
 		f, ax1 = plt.subplots(1, 1, sharey=True, figsize=(12, 6))
 		ax1.yaxis.grid()
 		display_width = 0.027
@@ -367,6 +368,12 @@ if __name__ == "__main__":
 	#plot_no_contention_ideal(plot_path, result_dicts, best_algorithm_on_average)
 	sys.stdout.write("\n# NO CONTENTION (NOISE) PLOT \n")
 	sys.stdout.write("#######################\n")
-	plot_path, result_dicts, workflows, clusters, best_algorithm_on_average = importData(sys.argv[1], 1)
-	plot_no_contention_noise(plot_path, result_dicts, best_algorithm_on_average,["1000genome-chameleon-8ch-250k-001.json","epigenomics-chameleon-ilmn-4seq-50k-001.json","srasearch-chameleon-10a-003.json"])
+	file_factors=[1,10,100,1000]
+	allResults=[]
+	plot_path, result_dicts, workflows, clusters, best_algorithm_on_average = importData(sys.argv[1], file_factor,1)
+	for factor in file_factors:
+		result_dicts= importData(sys.argv[1],factor,0)[1]
+		allResults.append(result_dicts)
+
+	plot_no_contention_noise(plot_path, allResults, best_algorithm_on_average,["1000genome-chameleon-8ch-250k-001.json","epigenomics-chameleon-ilmn-4seq-50k-001.json","srasearch-chameleon-10a-003.json"])
 	

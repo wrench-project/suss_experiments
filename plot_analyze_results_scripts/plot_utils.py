@@ -151,7 +151,7 @@ def compute_adfb(results_dict, workflow, platform, base_noise, target_noise):
 #
 # Helper function, imports all the data and returns the result_dict, workflows , and clusters
 ###################################
-def importData(version, verbosity=2):
+def importData(version, file_factor,verbosity=2):
 	plot_path = "plots_" + version + "/"
 
 	# Read extracted files in to a dictionary of results
@@ -170,7 +170,7 @@ def importData(version, verbosity=2):
 							 "'. Start Mongo and run the extract_all_results.py script first!\n")
 			sys.exit(1)
 		contents = file.read()
-		result_dicts[f] = ast.literal_eval(contents)[1]
+		result_dicts[f] = ast.literal_eval(contents)[file_factor]
 
 	# Identify the workflows and the clusters, in sorted lists
 	workflows = sorted(result_dicts["basic_algorithms"].keys())  # sorted lexicographically

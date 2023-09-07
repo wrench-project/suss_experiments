@@ -16,8 +16,9 @@ def main():
 	if len(sys.argv) != 2:
 		sys.stderr.write("Usage: " + sys.argv[0] + " <version>\n")
 		sys.exit(1)
-
-	plot_path, result_dicts, workflows, clusters, best_algorithm_on_average = importData(sys.argv[1], 2)
+	file_factors=[1,10,100,1000]
+	file_factor=1
+	plot_path, result_dicts, workflows, clusters, best_algorithm_on_average = importData(sys.argv[1],file_factor, 2)
 
 	# Generate basic algorithms plot
 	sys.stdout.write("\n# BASIC ALGORITHMS PLOT\n")
@@ -77,13 +78,20 @@ def main():
 	#start_noises = [0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0]
 #	
 #	plot_no_contention_ideal(plot_path, result_dicts, best_algorithm_on_average)
+	sys.stdout.write("\n# IMPORTING FILEFACTOR RESULTS\n")
+	sys.stdout.write("########################\n")
+	allResults=[]
+	for factor in file_factors:
 	
+		result = importData(sys.argv[1],factor,0)[1]
+		allResults.append(result)
 	# no Contention noise
 	sys.stdout.write("\n# NO CONTENTION (NOISE) PLOTS\n")
 	sys.stdout.write("########################\n")
 	start_noises = [0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0]
 	#plot_no_contention_noise(plot_path, result_dicts, best_algorithm_on_average,["srasearch-chameleon-10a-003.json","bwa-chameleon-large-003.json","epigenomics-chameleon-ilmn-4seq-50k-001.json"])
-	plot_no_contention_noise(plot_path, result_dicts, best_algorithm_on_average,["1000genome-chameleon-8ch-250k-001.json","epigenomics-chameleon-ilmn-4seq-50k-001.json","srasearch-chameleon-10a-003.json"])
+	for factor in file_factors:
+		plot_no_contention_noise(plot_path, allResults, factor, best_algorithm_on_average,["1000genome-chameleon-8ch-250k-001.json","epigenomics-chameleon-ilmn-4seq-50k-001.json","srasearch-chameleon-10a-003.json"])
 	
 # MAIN
 if __name__ == "__main__":

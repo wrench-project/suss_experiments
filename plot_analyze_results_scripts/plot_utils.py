@@ -171,6 +171,7 @@ def importData(version, file_factor,verbosity=2):
 			sys.exit(1)
 		contents = file.read()
 		allResults=ast.literal_eval(contents)
+		print(allResult.keys())
 		result_dicts[f] = allResults[file_factor]
 
 	# Identify the workflows and the clusters, in sorted lists

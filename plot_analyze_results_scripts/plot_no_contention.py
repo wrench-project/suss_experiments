@@ -375,7 +375,7 @@ if __name__ == "__main__":
 	#plot_no_contention_ideal(plot_path, result_dicts, best_algorithm_on_average)
 	sys.stdout.write("\n# NO CONTENTION (NOISE) PLOT \n")
 	sys.stdout.write("#######################\n")
-	file_factors=[1,10,100]
+	file_factors=[1,10,100,1000]
 	allResults=[]
 	plot_path, result_dicts, workflows, clusters, best_algorithm_on_average = importData(sys.argv[1], file_factors[1],1)
 	for factor in file_factors:

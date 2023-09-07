@@ -236,7 +236,7 @@ if __name__ == "__main__":
 		sys.stderr.write("Usage: " + sys.argv[0] + " <version>\n")
 		sys.exit(1)
 	file_factor=1
-	plot_path, result_dicts, workflows, clusters, best_algorithm_on_average = importData(sys.argv[1],file_factor. 1)
+	plot_path, result_dicts, workflows, clusters, best_algorithm_on_average = importData(sys.argv[1],file_factor, 1)
 	# Generate the noise violin plots for all cases
 	sys.stdout.write("\n# ERROR PLOTS\n")
 	sys.stdout.write("#############\n")

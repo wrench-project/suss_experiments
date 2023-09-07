@@ -239,7 +239,7 @@ def plot_no_contention_noise(plot_path, results_dict,file_factor, best_algorithm
 	colors[workflows[0]] = "red"
 	colors[workflows[1]] = "royalblue"
 	colors[workflows[2]] = "darkorange"
-	
+    
 
 	workflow_indices = {}
 	workflow_indices[workflows[0]] = 8

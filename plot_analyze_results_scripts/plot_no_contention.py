@@ -371,7 +371,7 @@ if __name__ == "__main__":
 	sys.stdout.write("#######################\n")
 	file_factors=[1,10,100]
 	allResults=[]
-	plot_path, result_dicts, workflows, clusters, best_algorithm_on_average = importData(sys.argv[1], file_factor,1)
+	plot_path, result_dicts, workflows, clusters, best_algorithm_on_average = importData(sys.argv[1], file_factors[1],1)
 	for factor in file_factors:
 		result_dicts= importData(sys.argv[1],factor,0)[1]
 		allResults.append(result_dicts)

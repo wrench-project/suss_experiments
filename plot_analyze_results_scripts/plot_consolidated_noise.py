@@ -62,6 +62,7 @@ if __name__ == "__main__":
     sys.stdout.write("\n# AVE. DFB PLOTS PER WORKFLOW / PLATFORM\n")
     sys.stdout.write("########################################\n")
     start_noises = [0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0]
+	file_factor=1
     for workflow in workflows:
         for cluster in clusters:
             noise_lines = {}
@@ -72,7 +73,7 @@ if __name__ == "__main__":
                 line = []
                 for end_noise_index in range(0, start_noise_index + 1):
                     end_noise = start_noises[end_noise_index]
-                    adfb = compute_adfb(result_dicts, workflow, cluster, start_noise, end_noise)
+                    adfb = compute_adfb(result_dicts[file_factor], workflow, cluster, start_noise, end_noise)
                     line.append(adfb)
                 noise_lines[start_noise] = line
             plot_adfb_lines(plot_path, workflow, cluster, noise_lines)

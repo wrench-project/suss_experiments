@@ -45,4 +45,5 @@ if __name__ == "__main__":
     # Compute multi-adaptation statistics
     sys.stdout.write("\n# ZERO-ERROR, MULTI-ADAPTATION STATISTICS\n")
     sys.stdout.write("#########################################\n")
-    compute_multi_adaptation_statistics(result_dicts["multi_adaptation"])
+	file_factor=1
+    compute_multi_adaptation_statistics(result_dicts[file_factor]["multi_adaptation"])

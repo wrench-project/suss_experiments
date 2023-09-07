@@ -27,6 +27,7 @@ def write_results_to_file(filename, data):
 
 
 def main():
+	file_factors=[1,10,100,1000]
 	if len(sys.argv) != 3:
 		sys.stderr.write("Usage: " + sys.argv[0] + " <version> <mongo url>\n")
 		sys.stderr.write("  For instance: " + sys.argv[0] + " v3 mongodb://128.171.140.102:443\n")
@@ -62,9 +63,9 @@ def main():
 	############################################
 	sys.stderr.write("Extracting 'basic_algorithms' results...\n")
 	bandwidth={}
-	for bwf in {1,10,100,100}:
+	for file_factor in file_factors:
 		results = {}
-		print("Bandwidth Factor: " + str(bwf))
+		print("Bandwidth Factor: " + str(file_factor))
 
 		for workflow in workflows:
 			results[workflow] = {}
@@ -84,16 +85,16 @@ def main():
 						alg_name = doc["task_selection_schemes"] + "/" + doc["cluster_selection_schemes"] + "/" + doc[
 							"core_selection_schemes"]
 						results[workflow][cluster][alg_name] = doc["makespan"]
-		bandwidth[bwf]=results
+		bandwidth[file_factor]=results
 	write_results_to_file("basic_algorithms_extracted_results_"+version+".dict", bandwidth)
 
 	# MULTI-ADAPTION RESULTS
 	############################################
 	sys.stderr.write("Extracting 'multi_adaptation' results...\n")
 	bandwidth={}
-	for bwf in {1,10,100,100}:
+	for file_factor in file_factors:
 		results = {}
-		print("Bandwidth Factor: " + str(bwf))
+		print("Bandwidth Factor: " + str(file_factor))
 
 		for workflow in workflows:
 			results[workflow] = {}
@@ -115,16 +116,16 @@ def main():
 							results[workflow][cluster]["us_no_adapt"] = doc["makespan"]
 						else:
 							results[workflow][cluster]["us_adapt"] = doc["makespan"]
-		bandwidth[bwf]=results
+		bandwidth[file_factor]=results
 	write_results_to_file("multi_adaptation_results_"+version+".dict", bandwidth)
 
 	# NOISE RESULTS
 	############################################
 	sys.stderr.write("Extracting 'noise' results...\n")
 	bandwidth={}
-	for bwf in {1,10,100,100}:
+	for file_factor in file_factors:
 		results = {}
-		print("Bandwidth Factor: " + str(bwf))
+		print("Bandwidth Factor: " + str(file_factor))
 
 		for noise in noises:
 			print("NOISE: " + str(noise))
@@ -146,7 +147,7 @@ def main():
 						# print("	  PLATFORMS: "+cluster)
 						results[noise][target_noise][workflow][cluster] = {}
 
-						cursor = collection.find({"bandwidth_factor":bwf,"clusters": cluster, "workflow": workflow,"no_contention":False,"no_contention_in_speculative_executions":False})
+						cursor = collection.find({"bandwidth_factor":file_factor,"clusters": cluster, "workflow": workflow,"no_contention":False,"no_contention_in_speculative_executions":False})
 						us_makespans = []
 						for doc in cursor:
 							if (noise_reduction == 0.0) and (doc["disable_adaptation_if_noise_has_not_changed"] == False):
@@ -163,16 +164,16 @@ def main():
 										doc["simulation_noise_reduction"] == noise_reduction):
 									us_makespans.append(doc["makespan"])
 						results[noise][target_noise][workflow][cluster]["us"] = us_makespans
-		bandwidth[bwf]=results
+		bandwidth[file_factor]=results
 	write_results_to_file("noise_extracted_results_"+version+".dict", bandwidth)
 
 	# NOISE MITIGATION RESULTS
 	############################################
 	sys.stderr.write("Extracting 'noise mitigation' results...\n")
 	bandwidth={}
-	for bwf in {1,10,100,100}:
+	for file_factor in file_factors:
 		results = {}
-		print("Bandwidth Factor: " + str(bwf))
+		print("Bandwidth Factor: " + str(file_factor))
 
 		for noise in noises:
 			print("NOISE: " + str(noise))
@@ -194,7 +195,7 @@ def main():
 						# print("	  PLATFORMS: "+cluster)
 						results[noise][target_noise][workflow][cluster] = {}
 
-						cursor = collection.find({"bandwidth_factor":bwf,"clusters": cluster, "workflow": workflow,"no_contention":False,"no_contention_in_speculative_executions":False})
+						cursor = collection.find({"bandwidth_factor":file_factor,"clusters": cluster, "workflow": workflow,"no_contention":False,"no_contention_in_speculative_executions":False})
 						us_makespans = []
 						for doc in cursor:
 							if noise_reduction == 0.0:
@@ -212,15 +213,15 @@ def main():
 										doc["simulation_noise_reduction"] == noise_reduction):
 									us_makespans.append(doc["makespan"])
 						results[noise][target_noise][workflow][cluster]["us"] = us_makespans
-			bandwidth[bwf]=results
+			bandwidth[file_factor]=results
 	write_results_to_file("noise_mitigation_extracted_results_"+version+".dict", bandwidth)
 	# IDEAL NO CONTENTION RESULTS
 	############################################
 	sys.stderr.write("Extracting 'ideal no contention' results...\n")
 	bandwidth={}
-	for bwf in {1,10,100,100}:
+	for file_factor in file_factors:
 		results = {}
-		print("Bandwidth Factor: " + str(bwf))
+		print("Bandwidth Factor: " + str(file_factor))
 
 
 		for workflow in workflows:
@@ -231,7 +232,7 @@ def main():
 				# print("	  PLATFORMS: "+cluster)
 				results[workflow][cluster] = {}
 
-				cursor = collection.find({"bandwidth_factor":bwf,"clusters": cluster, "workflow": workflow,"no_contention":True})
+				cursor = collection.find({"bandwidth_factor":file_factor,"clusters": cluster, "workflow": workflow,"no_contention":True})
 				us_makespans = []
 				for doc in cursor:
 					
@@ -239,7 +240,7 @@ def main():
 								   doc["core_selection_schemes"]
 						results[workflow][cluster][alg_name] = doc["makespan"]
 
-		bandwidth[bwf]=results
+		bandwidth[file_factor]=results
 
 	write_results_to_file("no_contention_ideal_extracted_results_"+version+".dict", bandwidth)
 	
@@ -247,9 +248,9 @@ def main():
 	############################################
 	sys.stderr.write("Extracting 'contention noise' results...\n")
 	bandwidth={}
-	for bwf in {1,10,100,100}:
+	for file_factor in file_factors:
 		results = {}
-		print("Bandwidth Factor: " + str(bwf))
+		print("Bandwidth Factor: " + str(file_factor))
 		for noise in noises:
 			print("NOISE: " + str(noise))
 			results[noise] = {}
@@ -270,7 +271,7 @@ def main():
 						# print("	  PLATFORMS: "+cluster)
 						results[noise][target_noise][workflow][cluster] = {}
 
-						cursor = collection.find({"bandwidth_factor":bwf,"clusters": cluster, "workflow": workflow,"no_contention":False,"no_contention_in_speculative_executions":True})
+						cursor = collection.find({"bandwidth_factor":file_factor,"clusters": cluster, "workflow": workflow,"no_contention":False,"no_contention_in_speculative_executions":True})
 						us_makespans = []
 						for doc in cursor:
 							if (noise_reduction == 0.0) and (doc["disable_adaptation_if_noise_has_not_changed"] == False):
@@ -287,7 +288,7 @@ def main():
 										doc["simulation_noise_reduction"] == noise_reduction):
 									us_makespans.append(doc["makespan"])
 						results[noise][target_noise][workflow][cluster]["us"] = us_makespans
-		bandwidth[bwf]=results
+		bandwidth[file_factor]=results
 	write_results_to_file("no_contention_noise_extracted_results_"+version+".dict", bandwidth)
 if __name__ == "__main__":
 	main()

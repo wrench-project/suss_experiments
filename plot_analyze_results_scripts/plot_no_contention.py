@@ -7,6 +7,7 @@ from mappings import workflow_indices
 import sys
 sys.path.append('../')
 from extract_scripts.pretty_dict import pretty_dict
+	
 def plot_no_contention_ideal(plot_path, results_dict, best_algorithm_on_average):
 	baseline = results_dict["basic_algorithms"]
 	contention = results_dict["no_contention"]

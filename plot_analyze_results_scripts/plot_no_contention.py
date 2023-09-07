@@ -375,6 +375,6 @@ if __name__ == "__main__":
 	for factor in file_factors:
 		result_dicts= importData(sys.argv[1],factor,0)[1]
 		allResults.append(result_dicts)
-
-	plot_no_contention_noise(plot_path, allResults, best_algorithm_on_average,["1000genome-chameleon-8ch-250k-001.json","epigenomics-chameleon-ilmn-4seq-50k-001.json","srasearch-chameleon-10a-003.json"])
+	for factor in file_factors:
+		plot_no_contention_noise(plot_path, allResults, factor, best_algorithm_on_average,["1000genome-chameleon-8ch-250k-001.json","epigenomics-chameleon-ilmn-4seq-50k-001.json","srasearch-chameleon-10a-003.json"])
 	

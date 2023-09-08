@@ -25,7 +25,7 @@ def plot_no_contention_ideal(plot_path, results_dict, best_algorithm_on_average)
 
 def plot_no_contention_noise(plot_path, results_dict, file_factor, best_algorithm_on_average, workflows):
 	results_dict=results_dict[file_factor]
-	pretty_dict(results_dict)
+	#pretty_dict(results_dict)
 	# (Re) Compute the dfb of the best_algorithm_on_average
 	noNoise = results_dict["basic_algorithms"]
 
@@ -96,7 +96,7 @@ def plot_no_contention_noise(plot_path, results_dict, file_factor, best_algorith
 				std_error=0;
 			else:
 				std_error = np.std(flats[workflow][base_noise]["noise"], ddof=1) / np.sqrt(len(flats[workflow][base_noise]["noise"]))
-			print(workflow,base_noise,file_factor,flats[workflow][base_noise]["noise"])
+			#print(workflow,base_noise,file_factor,flats[workflow][base_noise]["noise"])
 			average = sum(flats[workflow][base_noise]["noise"]) / len(flats[workflow][base_noise]["noise"])
 			averages[workflow][base_noise]["noise"]=average
 			errors[workflow][base_noise]["noise"]=std_error

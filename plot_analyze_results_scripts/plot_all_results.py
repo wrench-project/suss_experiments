@@ -80,11 +80,11 @@ def main():
 #	plot_no_contention_ideal(plot_path, result_dicts, best_algorithm_on_average)
 	sys.stdout.write("\n# IMPORTING FILEFACTOR RESULTS\n")
 	sys.stdout.write("########################\n")
-	allResults=[]
+	allResults={}
 	for factor in file_factors:
 	
 		result = importData(sys.argv[1],factor,0)[1]
-		allResults.append(result)
+		allResults[factor]=result
 	# no Contention noise
 	sys.stdout.write("\n# NO CONTENTION (NOISE) PLOTS\n")
 	sys.stdout.write("########################\n")

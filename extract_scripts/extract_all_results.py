@@ -73,7 +73,7 @@ def main():
 			for cluster in clusters:
 				results[workflow][cluster] = {}
 
-				cursor = collection.find({"clusters": cluster, "workflow": workflow,"no_contention":False,"no_contention_in_speculative_executions":False})
+				cursor = collection.find({"file_size_factor":file_factor,"clusters": cluster, "workflow": workflow,"no_contention":False,"no_contention_in_speculative_executions":False})
 				us_makespans = []
 				for doc in cursor:
 					# print(doc)
@@ -102,7 +102,7 @@ def main():
 			for cluster in clusters:
 				results[workflow][cluster] = {}
 
-				cursor = collection.find({"clusters": cluster, "workflow": workflow,"no_contention":False,"no_contention_in_speculative_executions":False})
+				cursor = collection.find({"file_size_factor":file_factor,"clusters": cluster, "workflow": workflow,"no_contention":False,"no_contention_in_speculative_executions":False})
 				us_makespans = []
 				for doc in cursor:
 					if doc["simulation_noise"] > 0.0:

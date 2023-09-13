@@ -215,6 +215,7 @@ def main():
 						results[noise][target_noise][workflow][cluster]["us"] = us_makespans
 			file_factor_dict[file_factor]=results
 	write_results_to_file("noise_mitigation_extracted_results_"+version+".dict", file_factor_dict)
+
 	# IDEAL NO CONTENTION RESULTS
 	############################################
 	sys.stderr.write("Extracting 'ideal no contention' results...\n")

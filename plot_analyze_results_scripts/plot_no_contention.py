@@ -58,6 +58,7 @@ def plot_no_contention_noise(plot_path, results_dict, file_factor, best_algorith
 					algs = noNoise[workflow][platform]
 
 					safeRemove(algs, "us")
+					print("WORKFLOW: " + workflow + "; PLAT=" + platform + "; ALGS:" + str(algs))
 					best = min(algs.values())
 					if not workflow in transMap:
 						transMap[workflow]={}
@@ -76,6 +77,9 @@ def plot_no_contention_noise(plot_path, results_dict, file_factor, best_algorith
 				except ZeroDivisionError:
 					sys.stderr.write("Div 0 error")
 					break
+				except ValueError:
+					continue
+
 		for workflow in transMap:
 			try:
 				if not workflow in flats:
@@ -386,6 +390,6 @@ if __name__ == "__main__":
 
 	allResults={}
 	for factor in file_factors:
-		plot_path, result_dicts, workflows, clusters, best_algorithm_on_average = importData(sys.argv[1], factor,1)
+		plot_path, result_dicts, workflows, clusters, best_algorithm_on_average = importData(sys.argv[1], factor, 1)
 		plot_no_contention_noise(plot_path, result_dicts, factor, best_algorithm_on_average,["1000genome-chameleon-8ch-250k-001.json","epigenomics-chameleon-ilmn-4seq-50k-001.json","srasearch-chameleon-10a-003.json"])
 

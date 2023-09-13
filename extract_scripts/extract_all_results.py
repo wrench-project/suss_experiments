@@ -27,7 +27,6 @@ def write_results_to_file(filename, data):
 
 
 def main():
-	file_factors=[1,10,100,1000]
 	if len(sys.argv) != 3:
 		sys.stderr.write("Usage: " + sys.argv[0] + " <version> <mongo url>\n")
 		sys.stderr.write("  For instance: " + sys.argv[0] + " v3 mongodb://128.171.140.102:443\n")
@@ -46,17 +45,20 @@ def main():
 	clusters = set()
 	noises = set()
 	noise_reductions = set()
+	file_factors = set()
 	cursor = collection.find({})
 	for doc in cursor:
 		workflows.add(doc["workflow"])
 		clusters.add(doc["clusters"])
 		noises.add(doc["simulation_noise"])
 		noise_reductions.add(doc["simulation_noise_reduction"])
+		file_factors.add(doc["file_size_factor"])
 
 	workflows = sorted(list(workflows))
 	clusters = sorted(list(clusters))
 	noises = sorted(list(noises))
 	noise_reductions = sorted(list(noise_reductions))
+	file_factors = sorted(list(file_factors))
 
 	#if False:
 	# BASIC ALGORITHMS RESULTS
@@ -213,7 +215,7 @@ def main():
 										doc["simulation_noise_reduction"] == noise_reduction):
 									us_makespans.append(doc["makespan"])
 						results[noise][target_noise][workflow][cluster]["us"] = us_makespans
-			file_factor_dict[file_factor]=results
+		file_factor_dict[file_factor]=results
 	write_results_to_file("noise_mitigation_extracted_results_"+version+".dict", file_factor_dict)
 
 	# IDEAL NO CONTENTION RESULTS
@@ -223,7 +225,6 @@ def main():
 	for file_factor in file_factors:
 		results = {}
 		print("File Factor: " + str(file_factor))
-
 
 		for workflow in workflows:
 			# print("	WORKFLOW: " + workflow)

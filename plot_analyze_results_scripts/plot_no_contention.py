@@ -7,7 +7,7 @@ from mappings import workflow_indices
 import sys
 sys.path.append('../')
 from extract_scripts.pretty_dict import pretty_dict
-	
+
 def plot_no_contention_ideal(plot_path, results_dict, best_algorithm_on_average):
 	baseline = results_dict["basic_algorithms"]
 	contention = results_dict["no_contention"]
@@ -77,39 +77,43 @@ def plot_no_contention_noise(plot_path, results_dict, file_factor, best_algorith
 					sys.stderr.write("Div 0 error")
 					break
 		for workflow in transMap:
-			if not workflow in flats:
-				flats[workflow]={}
-				averages[workflow]={}
-				errors[workflow]={}
-			if not base_noise in flats[workflow]:
-				flats[workflow][base_noise] = {"noise":[],"noContention":[]}
-				averages[workflow][base_noise]={}
-				errors[workflow][base_noise]={}
-			for platform in transMap[workflow]:
-				for point in transMap[workflow][platform]["noise"]:
-					flats[workflow][base_noise]["noise"].append(point)
-				for point in transMap[workflow][platform]["noContention"]:
-					flats[workflow][base_noise]["noContention"].append(point)
-			#print(workflow,base_noise)
-			#print(flats[workflow][base_noise]["noise"])
-			if len(flats[workflow][base_noise]["noise"])==1:
-				std_error=0;
-			else:
-				std_error = np.std(flats[workflow][base_noise]["noise"], ddof=1) / np.sqrt(len(flats[workflow][base_noise]["noise"]))
-			#print(workflow,base_noise,file_factor,flats[workflow][base_noise]["noise"])
-			average = sum(flats[workflow][base_noise]["noise"]) / len(flats[workflow][base_noise]["noise"])
-			averages[workflow][base_noise]["noise"]=average
-			errors[workflow][base_noise]["noise"]=std_error
-			if len(flats[workflow][base_noise]["noContention"]):
-				std_error=0;
-			else:
-				std_error = np.std(flats[workflow][base_noise]["noContention"], ddof=1) / np.sqrt(len(flats[workflow][base_noise]["noContention"]))
-			if len(flats[workflow][base_noise]["noContention"])>0:
-				average = sum(flats[workflow][base_noise]["noContention"]) / len(flats[workflow][base_noise]["noContention"])
-			else:
-				average = sum(flats[workflow][base_noise]["noContention"]) / 1
-			averages[workflow][base_noise]["noContention"]=average
-			errors[workflow][base_noise]["noContention"]=std_error
+			try:
+				if not workflow in flats:
+					flats[workflow]={}
+					averages[workflow]={}
+					errors[workflow]={}
+				if not base_noise in flats[workflow]:
+					flats[workflow][base_noise] = {"noise":[],"noContention":[]}
+					averages[workflow][base_noise]={}
+					errors[workflow][base_noise]={}
+				for platform in transMap[workflow]:
+					for point in transMap[workflow][platform]["noise"]:
+						flats[workflow][base_noise]["noise"].append(point)
+					for point in transMap[workflow][platform]["noContention"]:
+						flats[workflow][base_noise]["noContention"].append(point)
+				if len(flats[workflow][base_noise]["noise"])==1:
+					std_error=0
+				else:
+					std_error = np.std(flats[workflow][base_noise]["noise"], ddof=1) / np.sqrt(len(flats[workflow][base_noise]["noise"]))
+				#print(workflow,base_noise,file_factor,flats[workflow][base_noise]["noise"])
+				average = sum(flats[workflow][base_noise]["noise"]) / len(flats[workflow][base_noise]["noise"])
+				averages[workflow][base_noise]["noise"]=average
+				errors[workflow][base_noise]["noise"]=std_error
+				if len(flats[workflow][base_noise]["noContention"]):
+					std_error=0;
+				else:
+					std_error = np.std(flats[workflow][base_noise]["noContention"], ddof=1) / np.sqrt(len(flats[workflow][base_noise]["noContention"]))
+				if len(flats[workflow][base_noise]["noContention"])>0:
+					average = sum(flats[workflow][base_noise]["noContention"]) / len(flats[workflow][base_noise]["noContention"])
+				else:
+					average = sum(flats[workflow][base_noise]["noContention"]) / 1
+				averages[workflow][base_noise]["noContention"]=average
+				errors[workflow][base_noise]["noContention"]=std_error
+			except:
+				if workflow in averages:
+					averages.pop(workflow)
+				pass
+
 	finalAverages={}
 	finalErrors={}
 	for workflow in averages:
@@ -147,7 +151,7 @@ def plot_no_contention_noise(plot_path, results_dict, file_factor, best_algorith
 		ax1.set_xticks(x_ticks)
 		ax1.set_xticklabels(x_ticklabels, rotation=45, fontsize=fontsize - 2)
 
-		ax1.set_ylabel("% makespan improvement", fontsize=fontsize)
+		ax1.set_ylabel("% degradation from best (dfb)", fontsize=fontsize)
 		ax1.set_xlabel("Workflow", fontsize=fontsize)
 
 		# Create the figure
@@ -194,6 +198,8 @@ def plot_no_contention_noise(plot_path, results_dict, file_factor, best_algorith
 					 color='red',
 					 linestyle='None',
 					 ecolor='black',zorder=11)
+
+		ax1.legend()
 		plt.savefig(output_filename)
 		plt.close()
 		sys.stdout.write("Generated plot '" + output_filename + "'\n")
@@ -375,11 +381,11 @@ if __name__ == "__main__":
 	#plot_no_contention_ideal(plot_path, result_dicts, best_algorithm_on_average)
 	sys.stdout.write("\n# NO CONTENTION (NOISE) PLOT \n")
 	sys.stdout.write("#######################\n")
+	# file_factors=[1,10,100,1000]
 	file_factors=[1,10,100,1000]
-
 
 	allResults={}
 	for factor in file_factors:
 		plot_path, result_dicts, workflows, clusters, best_algorithm_on_average = importData(sys.argv[1], factor,1)
 		plot_no_contention_noise(plot_path, result_dicts, factor, best_algorithm_on_average,["1000genome-chameleon-8ch-250k-001.json","epigenomics-chameleon-ilmn-4seq-50k-001.json","srasearch-chameleon-10a-003.json"])
-	
+

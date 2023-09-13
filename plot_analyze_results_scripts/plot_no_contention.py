@@ -24,7 +24,7 @@ def plot_no_contention_ideal(plot_path, results_dict, best_algorithm_on_average)
 
 
 def plot_no_contention_noise(plot_path, results_dict, file_factor, best_algorithm_on_average, workflows):
-	results_dict=results_dict[file_factor]
+	#results_dict=results_dict[file_factor]
 	#pretty_dict(results_dict)
 	# (Re) Compute the dfb of the best_algorithm_on_average
 	noNoise = results_dict["basic_algorithms"]
@@ -377,12 +377,9 @@ if __name__ == "__main__":
 	sys.stdout.write("#######################\n")
 	file_factors=[1,10,100,1000]
 
-	plot_path, result_dicts, workflows, clusters, best_algorithm_on_average = importData(sys.argv[1], file_factors[1],1)
+
 	allResults={}
 	for factor in file_factors:
-	
-		result = importData(sys.argv[1],factor,0)[1]
-		allResults[factor]=result
-	for factor in file_factors:
-		plot_no_contention_noise(plot_path, allResults, factor, best_algorithm_on_average,["1000genome-chameleon-8ch-250k-001.json","epigenomics-chameleon-ilmn-4seq-50k-001.json","srasearch-chameleon-10a-003.json"])
+		plot_path, result_dicts, workflows, clusters, best_algorithm_on_average = importData(sys.argv[1], factor,1)
+		plot_no_contention_noise(plot_path, result_dicts, factor, best_algorithm_on_average,["1000genome-chameleon-8ch-250k-001.json","epigenomics-chameleon-ilmn-4seq-50k-001.json","srasearch-chameleon-10a-003.json"])
 	

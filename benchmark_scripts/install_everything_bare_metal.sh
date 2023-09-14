@@ -5,9 +5,10 @@ sudo apt install -y libboost-program-options-dev
 sudo apt install -y cmake
 sudo apt install -y libboost-dev
 sudo apt install -y libboost-program-options-dev 
-git clone https://framagit.org/simgrid/simgrid.git
 
-cd simgrid
+wget --no-check-certificate https://framagit.org/simgrid/simgrid/-/archive/v3.34/simgrid-v3.34.tar.gz
+tar -xf simgrid-v3.34.tar.gz
+cd simgrid-v3.34
 mkdir build
 cd build
 cmake ..

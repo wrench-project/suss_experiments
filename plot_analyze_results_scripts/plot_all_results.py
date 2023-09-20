@@ -2,13 +2,13 @@
 from plot_utils import *
 
 # the following code roughly translates
-# from *.py in ./ import *
+# import ./*.py 
 import os
 
 for module in os.listdir(os.path.dirname(os.path.abspath(__file__))):
 	if module == __file__ or module[-3:] != '.py' or ' ' in module:
 		continue
-	exec("from " + module[:-3] + " import *")
+	exec("import " + module[:-3])
 del module
 
 
@@ -23,7 +23,7 @@ def main():
 	# Generate basic algorithms plot
 	sys.stdout.write("\n# BASIC ALGORITHMS PLOT\n")
 	sys.stdout.write("#######################\n")
-	generate_basic_algorithms_plot(plot_path, result_dicts["basic_algorithms"], best_algorithm_on_average)
+	plot_basic_algorithms.generate_basic_algorithms_plot(plot_path, result_dicts["basic_algorithms"], best_algorithm_on_average)
 
 	# Compute multi-adaptation statistics
 	#sys.stdout.write("\n# ZERO-ERROR, MULTI-ADAPTATION STATISTICS\n")
@@ -39,7 +39,7 @@ def main():
 		start_noise = start_noises[start_noise_index]
 		for end_noise_index in range(0, start_noise_index + 1):
 			end_noise = start_noises[end_noise_index]
-			plot_single_noise_line(result_dicts, start_noise, end_noise, best_algorithm_on_average,
+			plot_noise_mitigation.plot_single_noise_line(result_dicts, start_noise, end_noise, best_algorithm_on_average,
 								   plot_path + "dfb_vs_scenario_noise_" + str(start_noise) + "_mitigated_noise_" + str(end_noise) + ".pdf")
 
 
@@ -59,18 +59,18 @@ def main():
 					adfb = compute_adfb(result_dicts, workflow, cluster, start_noise, end_noise)
 					line.append(adfb)
 				noise_lines[start_noise] = line
-			plot_adfb_lines(plot_path, workflow, cluster, noise_lines)
+			plot_consolidated_noise.plot_adfb_lines(plot_path, workflow, cluster, noise_lines)
 
 	# No mitigation results
 	sys.stdout.write("\n# NO MITIGATION PLOT \n")
 	sys.stdout.write("#######################\n")
-	plot_no_mitigation(plot_path, result_dicts, best_algorithm_on_average)
+	plot_no_mitigation.plot_no_mitigation(plot_path, result_dicts, best_algorithm_on_average)
 
 	# Rank histogram plot
 	sys.stdout.write("\n# RANK HISTOGRAM PLOTS\n")
 	sys.stdout.write("########################\n")
 	start_noises = [0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0]
-	plot_cumulative_rank_histograms(plot_path, result_dicts, start_noises)
+	plot_noise_rank_histogram.plot_cumulative_rank_histograms(plot_path, result_dicts, start_noises)
 
 	# no Contention ideal
 	#sys.stdout.write("\n# NO CONTENTION (IDEAL) PLOTS\n")
@@ -91,7 +91,7 @@ def main():
 	start_noises = [0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0]
 	#plot_no_contention_noise(plot_path, result_dicts, best_algorithm_on_average,["srasearch-chameleon-10a-003.json","bwa-chameleon-large-003.json","epigenomics-chameleon-ilmn-4seq-50k-001.json"])
 	for factor in file_factors:
-		plot_no_contention_noise(plot_path, allResults, factor, best_algorithm_on_average,["1000genome-chameleon-8ch-250k-001.json","epigenomics-chameleon-ilmn-4seq-50k-001.json","srasearch-chameleon-10a-003.json"])
+		plot_no_contention.plot_no_contention_noise(plot_path, allResults, factor, best_algorithm_on_average,["1000genome-chameleon-8ch-250k-001.json","epigenomics-chameleon-ilmn-4seq-50k-001.json","srasearch-chameleon-10a-003.json"])
 	
 # MAIN
 if __name__ == "__main__":

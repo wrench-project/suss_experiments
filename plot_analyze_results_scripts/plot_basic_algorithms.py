@@ -60,7 +60,7 @@ def generate_basic_algorithms_plot(plot_path, result_dict, best_on_average):
 
 	sys.stderr.write("Generated plot " + output_file + "\n")
 	print("min=", y[0], "max=", y[-1])
-	print("bellow 100%:",bisect(y,100))
+	print("below 100%:", bisect(y, 100))
 	return
 
 

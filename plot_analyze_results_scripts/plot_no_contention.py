@@ -3,6 +3,7 @@
 #warnings.filterwarnings("error")
 from plot_utils import *
 from mappings import workflow_indices
+from mappings import platform_configs
 
 import sys
 sys.path.append('../')
@@ -47,18 +48,19 @@ def plot_no_contention_noise(plot_path, results_dict, file_factor, best_algorith
 			if not workflow in noReduction or not workflow in noContention:
 				continue
 			for platform in noNoise[workflow]:
-				if len(platform) < 80: #p3 only
+				# print(platform + " vs " + platform_configs[1] + ": EQUAL?" + str(platform == platform_configs[1]))
+				if platform != platform_configs[0]: #p2 only
 					continue
 				if not platform in noReduction[workflow] or not platform in noContention[workflow]:
 					continue
-				#print(platform)
+				# print(platform)
 				try:
 					# print(noise)
 					# print(noNoise[workflow][platform])
 					algs = noNoise[workflow][platform]
 
 					safeRemove(algs, "us")
-					print("WORKFLOW: " + workflow + "; PLAT=" + platform + "; ALGS:" + str(algs))
+					#print("WORKFLOW: " + workflow + "; PLAT=" + platform + "; ALGS:" + str(algs))
 					best = min(algs.values())
 					if not workflow in transMap:
 						transMap[workflow]={}
@@ -95,7 +97,7 @@ def plot_no_contention_noise(plot_path, results_dict, file_factor, best_algorith
 						flats[workflow][base_noise]["noise"].append(point)
 					for point in transMap[workflow][platform]["noContention"]:
 						flats[workflow][base_noise]["noContention"].append(point)
-				if len(flats[workflow][base_noise]["noise"])==1:
+				if len(flats[workflow][base_noise]["noise"])<=1:
 					std_error=0
 				else:
 					std_error = np.std(flats[workflow][base_noise]["noise"], ddof=1) / np.sqrt(len(flats[workflow][base_noise]["noise"]))
@@ -103,7 +105,7 @@ def plot_no_contention_noise(plot_path, results_dict, file_factor, best_algorith
 				average = sum(flats[workflow][base_noise]["noise"]) / len(flats[workflow][base_noise]["noise"])
 				averages[workflow][base_noise]["noise"]=average
 				errors[workflow][base_noise]["noise"]=std_error
-				if len(flats[workflow][base_noise]["noContention"]):
+				if len(flats[workflow][base_noise]["noContention"]) <= 1:
 					std_error=0;
 				else:
 					std_error = np.std(flats[workflow][base_noise]["noContention"], ddof=1) / np.sqrt(len(flats[workflow][base_noise]["noContention"]))
@@ -155,8 +157,10 @@ def plot_no_contention_noise(plot_path, results_dict, file_factor, best_algorith
 		ax1.set_xticks(x_ticks)
 		ax1.set_xticklabels(x_ticklabels, rotation=45, fontsize=fontsize - 2)
 
+
+		ax1.set_title(workflow.split("-")[0] + " - "  + str(file_factor), fontsize = fontsize + 1)
 		ax1.set_ylabel("% degradation from best (dfb)", fontsize=fontsize)
-		ax1.set_xlabel("Workflow", fontsize=fontsize)
+		ax1.set_xlabel("Noise", fontsize=fontsize)
 
 		# Create the figure
 
@@ -200,7 +204,7 @@ def plot_no_contention_noise(plot_path, results_dict, file_factor, best_algorith
 					 linewidth=3,
 					 elinewidth=1,
 					 color='red',
-					 linestyle='None',
+					 linestyle='dashed',
 					 ecolor='black',zorder=11)
 
 		ax1.legend()

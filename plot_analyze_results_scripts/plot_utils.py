@@ -188,8 +188,7 @@ def importData(version, file_factor,verbosity=2):
 		sys.stdout.write("\n# BASIC ALGORITHM DFB STATISTICS\n")
 		sys.stdout.write("################################\n")
 
-	# best_algorithm_on_average = print_dfb_statistics(result_dicts["basic_algorithms"], verbosity)
-	best_algorithm_on_average = "whatever"
+	best_algorithm_on_average = print_dfb_statistics(result_dicts["basic_algorithms"], verbosity)
 	if verbosity > 0:
 		sys.stderr.write("\nBest algorithm on average = " + best_algorithm_on_average + "\n")
 

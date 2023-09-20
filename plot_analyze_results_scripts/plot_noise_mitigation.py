@@ -104,7 +104,6 @@ def plot_single_noise_line(results_dict, base_noise, target_noise, best_algorith
 	for workflow in noNoise:
 		for platform in noNoise[workflow]:
 			workform = "W" + str(1 + workflow_index_map[workflow]) + ":P" + str(1 + cluster_index_map[platform])
-			# print(workform)
 			try:
 				# print(noise)
 				# print(noNoise[workflow][platform])

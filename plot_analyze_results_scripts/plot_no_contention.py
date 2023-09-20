@@ -395,5 +395,5 @@ if __name__ == "__main__":
 	allResults={}
 	for factor in file_factors:
 		plot_path, result_dicts, workflows, clusters, best_algorithm_on_average = importData(sys.argv[1], factor, 1)
-		plot_no_contention.plot_no_contention_noise(plot_path, result_dicts, factor, best_algorithm_on_average,["1000genome-chameleon-8ch-250k-001.json","epigenomics-chameleon-ilmn-4seq-50k-001.json","srasearch-chameleon-10a-003.json"])
+		plot_no_contention_noise(plot_path, result_dicts, factor, best_algorithm_on_average,["1000genome-chameleon-8ch-250k-001.json","epigenomics-chameleon-ilmn-4seq-50k-001.json","srasearch-chameleon-10a-003.json"])
 

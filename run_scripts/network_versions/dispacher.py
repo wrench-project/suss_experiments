@@ -68,12 +68,12 @@ def main():
 						"48:10:3.21Gf:1:100Gbps:10Gbps,32:16:4.0125Gf:1:100Gbps:7Gbps",
 						"48:10:3.21Gf:1:100Gbps:10Gbps,32:16:4.0125Gf:1:100Gbps:7Gbps,10:48:6.4842Gf:1:100Gbps:8Gbps"
 					]
-					sys.stderr.write(f"!!!WARNING!!! '{version}' is not a recognized version, you may have forgot to add it to the versions array.  Defaulting to platform config "+str(platform_configurations))
+					sys.stderr.write(f"!!!WARNING!!! '{version}' is not a recognized version, you may have forgot to add it to the versions array.  Defaulting to platform config "+str(platform_configurations)+"\n")
 					input("Please confirm.\n")
 			else:
 				raise ValueError()
 		except ValueError:
-			sys.stderr.write(f"Invalid version argument '{version}'")
+			sys.stderr.write(f"Invalid version argument '{version}'\n")
 			raise BaseException()
 		server = sys.argv[2].split(":")
 

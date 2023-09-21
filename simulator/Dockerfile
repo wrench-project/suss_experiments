@@ -33,7 +33,7 @@ RUN wget https://github.com/nlohmann/json/archive/refs/tags/v3.10.5.tar.gz && ta
 RUN git clone https://github.com/wrench-project/wrench.git  && cd wrench && git checkout 99400dae4a7414651464b38afc8034d687d5c16f && cmake . && make -j4 && sudo make install && cd .. && rm -rf wrench
 
 # clone and install the scheduling_with_simulations_simulator with the right commit tab
-RUN git clone https://github.com/wrench-project/scheduling_using_simulation_simulator.git && cd scheduling_using_simulation_simulator && git checkout 035aab4a7be477f510365a8a2b9c255d685506e7 && mkdir build && cd build && cmake .. && make -j4 && sudo make install && cd ../.. && /bin/rm -rf scheduling_using_simulation_simulator/
+RUN git clone https://github.com/wrench-project/scheduling_using_simulation_simulator.git && cd scheduling_using_simulation_simulator && git checkout c72c660b2c9e6c321bb1cb0fc9d3da09b8ae5b23 && mkdir build && cd build && cmake .. && make -j4 && sudo make install && cd ../.. && /bin/rm -rf scheduling_using_simulation_simulator/
 
 # install pip
 RUN wget https://bootstrap.pypa.io/get-pip.py && python3 get-pip.py && /bin/rm get-pip.py

@@ -62,7 +62,7 @@ def main():
 					"48:10:3.21Gf:1:100Gbps:10Gbps,32:16:4.0125Gf:1:100Gbps:7Gbps,10:48:6.4842Gf:1:100Gbps:8Gbps"
 				]
 			elif(version[0]=='v'):
-				if(int(version[1:]>5):
+				if(int(version[1:])>5):
 					platform_configurations = [
 						"48:10:3.21Gf:1:100Gbps:10Gbps",
 						"48:10:3.21Gf:1:100Gbps:10Gbps,32:16:4.0125Gf:1:100Gbps:7Gbps",

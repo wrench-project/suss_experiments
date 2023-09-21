@@ -4,6 +4,7 @@
 venv
 *.pyc
 .bash_history
+build
 .lesshst
 .sudo_as_admin_successful
 .viminfo

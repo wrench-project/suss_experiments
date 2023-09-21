@@ -86,10 +86,11 @@ def main():
 		no_contention = "--no-contention" in sys.argv
 		pause_for_confirm = "--pause"in sys.argv
 		no_contention_in_speculative_executions = "--no-contention-in-speculative-executions" in sys.argv
-
+		no_amdahl_in_speculative_executions = "--no-amdahl-in-speculative-executions" in sys.argv
+		#no_amdahl = "--no-amdahl" in sys.argv
 
 		run_ideal_multi_adaptation = "--run-ideal-multi-adaptation" in sys.argv
-
+		
 			
 		run_mitigation = "--run-mitigation" in sys.argv	
 
@@ -112,7 +113,8 @@ def main():
 						 " <version> <server url> <path to root directory> "
 						 "<platform configuration list> <workflow configuration list> "
 						 "[--no-contention] "
-						 "[--no_contention_in_speculative_executions]"
+						 "[--no-contention-in-speculative-executions]"
+						 "[--no-amdahl-in-speculative-executions]"
 						 "[--run-ideal] "
 						 "[--run-ideal-multi-adaptation] "
 						 "[--run-noise <start seed> <end seed (inclusive)>] "
@@ -179,7 +181,8 @@ def main():
 		
 	if no_contention_in_speculative_executions:
 		base_base_command += " --no-contention-in-speculative-executions "
-
+	if no_amdahl_in_speculative_executions:
+		base_base_command += " --no-amdahl-in-speculative-executions "
 	commands_to_run = []
 	for file_factor in file_factors:
 		base_command=base_base_command+" --file_size_factor "+file_factor+" "

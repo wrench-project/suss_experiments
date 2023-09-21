@@ -53,18 +53,28 @@ def main():
 	######################
 	try:
 		version = sys.argv[1]
-
-		if version in ["v3","v4"]:
+		try:
+		if version in ["v3","v4","v5"]:
 			#file_factor = " --file_size_factor 1.0 "
 			platform_configurations = [
 				"48:10:3.21Gf:1:100Gbps:10Gbps",
 				"48:10:3.21Gf:1:100Gbps:10Gbps,32:16:4.0125Gf:1:100Gbps:7Gbps",
 				"48:10:3.21Gf:1:100Gbps:10Gbps,32:16:4.0125Gf:1:100Gbps:7Gbps,10:48:6.4842Gf:1:100Gbps:8Gbps"
 			]
+		elif(version[0]=='v'):
+			if(int(version[1:]>5):
+				platform_configurations = [
+					"48:10:3.21Gf:1:100Gbps:10Gbps",
+					"48:10:3.21Gf:1:100Gbps:10Gbps,32:16:4.0125Gf:1:100Gbps:7Gbps",
+					"48:10:3.21Gf:1:100Gbps:10Gbps,32:16:4.0125Gf:1:100Gbps:7Gbps,10:48:6.4842Gf:1:100Gbps:8Gbps"
+				]
+				sys.stderr.write(f"!!!WARNING!!! '{version}' is not a recognized version, you may have forgot to add it to the versions array.  Defaulting to platform config "+str(platform_configurations))
+				input("Please confirm.\n")
 		else:
-			sys.stderr.write("Invalid version argument")
+			raise ValueError()
+		except ValueError:
+			sys.stderr.write(f"Invalid version argument '{version}'")
 			raise BaseException()
-
 		server = sys.argv[2].split(":")
 
 		root_dir = os.path.abspath(sys.argv[3])

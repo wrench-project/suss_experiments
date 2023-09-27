@@ -407,7 +407,7 @@ if __name__ == "__main__":
 	sys.stdout.write("\n# NO CONTENTION (NOISE) PLOT \n")
 	sys.stdout.write("#######################\n")
 	# file_factors=[1,10,100,1000]
-	file_factors=[1,10,100,1000]
+	file_factors=[1]
 	platforms=[0,1,2]
 
 	for factor in file_factors:

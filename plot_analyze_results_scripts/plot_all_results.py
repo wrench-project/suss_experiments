@@ -78,6 +78,7 @@ def main():
 	#start_noises = [0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0]
 #	
 #	plot_no_contention_ideal(plot_path, result_dicts, best_algorithm_on_average)
+# no Contention noise
 	sys.stdout.write("\n# NO CONTENTION (NOISE) PLOTS\n")
 	sys.stdout.write("########################\n")
 	platforms=[0,1,2]
@@ -87,7 +88,23 @@ def main():
 		tie=0
 		plot_path, result_dicts, workflows, clusters, best_algorithm_on_average = importData(sys.argv[1], factor, 1)
 		for i in platforms:
-			ret=plot_no_contention.plot_no_contention_noise(plot_path, result_dicts, factor, best_algorithm_on_average,["1000genome-chameleon-8ch-250k-001.json","epigenomics-chameleon-ilmn-4seq-50k-001.json","srasearch-chameleon-10a-003.json"],i)
+			ret=plot_no_contention.plot_no_contention_noise(plot_path, result_dicts,"no_contention_noise", factor, best_algorithm_on_average,["1000genome-chameleon-8ch-250k-001.json","epigenomics-chameleon-ilmn-4seq-50k-001.json","srasearch-chameleon-10a-003.json"],i)
+			win+=ret[0]
+			loss+=ret[1]
+			tie+=ret[2]
+	
+		print(f"Agergated | Wins: {win} | Losses: {loss} | Ties: {tie}")
+	
+	# no Contention amdahl noise
+	#WARNING! old datasets destroyed
+	platforms=[0,1,2]
+	for factor in file_factors:
+		win=0
+		loss=0
+		tie=0
+		plot_path, result_dicts, workflows, clusters, best_algorithm_on_average = importData(sys.argv[1], factor, 1)
+		for i in platforms:
+			ret=plot_no_contention.plot_no_contention_noise(plot_path, result_dicts,"no_contention_amdahl_noise", factor, best_algorithm_on_average,["1000genome-chameleon-8ch-250k-001.json","epigenomics-chameleon-ilmn-4seq-50k-001.json","srasearch-chameleon-10a-003.json"],i)
 			win+=ret[0]
 			loss+=ret[1]
 			tie+=ret[2]
@@ -96,7 +113,6 @@ def main():
 	# no Contention noise
 	
 	#WARNING! old datasets destroyed
-		
 	
 # MAIN
 if __name__ == "__main__":

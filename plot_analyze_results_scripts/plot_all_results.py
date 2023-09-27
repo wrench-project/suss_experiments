@@ -94,7 +94,7 @@ def main():
 			tie+=ret[2]
 	
 		print(f"Agergated | Wins: {win} | Losses: {loss} | Ties: {tie}")
-	
+	sys.stdout.write("\n# NO CONTENTION AMDAHL (NOISE) PLOTS\n")
 	# no Contention amdahl noise
 	#WARNING! old datasets destroyed
 	platforms=[0,1,2]

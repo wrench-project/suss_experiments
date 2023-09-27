@@ -339,7 +339,7 @@ def main():
 									us_makespans.append(doc["makespan"])
 						results[noise][target_noise][workflow][cluster]["us"] = us_makespans
 		file_factor_dict[file_factor]=results
-	write_results_to_file("no_contention_ahmdal_noise_extracted_results_"+version+".dict", file_factor_dict)
+	write_results_to_file("no_contention_amdahl_noise_extracted_results_"+version+".dict", file_factor_dict)
 	
 	
 	return #############################################################################################################

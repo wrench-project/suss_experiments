@@ -162,7 +162,8 @@ def importData(version, file_factor,verbosity=2):
 					   "no_contention": "../extract_scripts/no_contention_ideal_extracted_results_"+version+".dict",
 					   "no_contention_noise": "../extract_scripts/no_contention_noise_extracted_results_"+version+".dict",
 					   "no_contention_amdahl_noise": "../extract_scripts/no_contention_amdahl_noise_extracted_results_"+version+".dict",
-					   #"no_amdahl_noise": "../extract_scripts/no_amdahl_noise_extracted_results_"+version+".dict"}
+					   #"no_amdahl_noise": "../extract_scripts/no_amdahl_noise_extracted_results_"+version+".dict"
+					   }
 	result_dicts = {}
 	for f in extracted_files:
 		try:

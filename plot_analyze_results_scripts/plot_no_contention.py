@@ -148,7 +148,7 @@ def plot_no_contention_noise(plot_path, results_dict, noise_dict, file_factor, b
 	tie=0
 	for workflow in averages:
 		fontsize = 18
-		output_filename = plot_path +noise_dict+"+workflow+"_p"+str(platform_to_use+1)+"_filefactor_"+str(file_factor)+".pdf"
+		output_filename = plot_path+noise_dict+workflow+"_p"+str(platform_to_use+1)+"_filefactor_"+str(file_factor)+".pdf"
 		f, ax1 = plt.subplots(1, 1, sharey=True, figsize=(12, 6))
 		ax1.yaxis.grid()
 		display_width = 0.027

@@ -342,11 +342,8 @@ def main():
 	write_results_to_file("no_contention_amdahl_noise_extracted_results_"+version+".dict", file_factor_dict)
 	
 	
-	return #############################################################################################################
-	#                                               Unused                                                      #
-	#############################################################################################################
-	# AMDAHL NOISE RESULTS
-	############################################
+
+	
 	sys.stderr.write("Extracting 'amdahl noise' results...\n")
 	file_factor_dict={}
 	for file_factor in file_factors:

@@ -340,10 +340,7 @@ def main():
 						results[noise][target_noise][workflow][cluster]["us"] = us_makespans
 		file_factor_dict[file_factor]=results
 	write_results_to_file("no_contention_no_amdahl_noise_extracted_results_"+version+".dict", file_factor_dict)
-	
-	
 
-	
 	sys.stderr.write("Extracting 'amdahl noise' results...\n")
 	file_factor_dict={}
 	for file_factor in file_factors:

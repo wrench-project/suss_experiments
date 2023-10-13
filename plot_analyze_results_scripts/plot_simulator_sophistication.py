@@ -12,9 +12,10 @@ from extract_scripts.pretty_dict import pretty_dict
 
 
 def plot_simulator_sophistication_dfbs(plot_path, results_dict, workflows, clusters):
-    sophistication_levels = ["no_contention_noise", "no_contention_amdahl_noise"]
-    noise_levels = result_dicts[sophistication_levels[0]].keys()
 
+    sophistication_levels = ["no_contention_no_amdahl_noise", "no_contention_yes_amdahl_noise",
+                             "yes_contention_no_amdahl_noise", "noise"]
+    noise_levels = result_dicts[sophistication_levels[0]].keys()
     # pretty_dict(results_dict)
     data_points = {}
     for noise_level in noise_levels:
@@ -38,15 +39,27 @@ def plot_simulator_sophistication_dfbs(plot_path, results_dict, workflows, clust
         f, ax1 = plt.subplots(1, 1, sharey=True, figsize=(12, 6))
         ax1.yaxis.grid()
 
-        colors = {"no_contention_noise": "r", "no_contention_amdahl_noise": "b"}
+        colors = {
+            "no_contention_no_amdahl_noise": "r",
+            "no_contention_yes_amdahl_noise": "b",
+            "yes_contention_no_amdahl_noise": "g",
+            "noise": "k"}
+
+        labels = {
+            "no_contention_no_amdahl_noise": "no-contention / no-amdahl",
+            "no_contention_yes_amdahl_noise": "no-contention / yes-amdahl",
+            "yes_contention_no_amdahl_noise": "yes-contention / no-amdahl",
+            "noise": "yes-contention / yes-amdahl"}
+
         for sophistication_level in sophistication_levels:
             cdf_values = []
             dfb_values = range(0, 100, 1)
             for dfb_value in dfb_values:
                 cdf_values.append(100 * sum([x <= dfb_value for x in data_points[noise_level][sophistication_level]]) /
-                               len(data_points[noise_level][sophistication_level]))
+                                  len(data_points[noise_level][sophistication_level]))
 
-            ax1.plot(dfb_values, cdf_values, colors[sophistication_level] + "-", linewidth=2, label=sophistication_level)
+            ax1.plot(dfb_values, cdf_values, colors[sophistication_level] + "-",
+                     linewidth=2, label=labels[sophistication_level])
 
         plt.legend()
         plt.savefig(output_filename)

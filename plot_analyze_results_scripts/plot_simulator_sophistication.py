@@ -47,9 +47,9 @@ def plot_simulator_sophistication_dfbs(plot_path, results_dict, workflows, clust
 
         labels = {
             "no_contention_no_amdahl_noise": "no-contention / no-amdahl",
-            "no_contention_yes_amdahl_noise": "no-contention / yes-amdahl",
-            "yes_contention_no_amdahl_noise": "yes-contention / no-amdahl",
-            "noise": "yes-contention / yes-amdahl"}
+            "no_contention_yes_amdahl_noise": "no-contention / amdahl",
+            "yes_contention_no_amdahl_noise": "contention / no-amdahl",
+            "noise": "contention / amdahl"}
 
         for sophistication_level in sophistication_levels:
             cdf_values = []

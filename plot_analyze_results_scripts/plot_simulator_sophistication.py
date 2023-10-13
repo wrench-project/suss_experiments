@@ -53,7 +53,7 @@ def plot_simulator_sophistication_dfbs(plot_path, results_dict, workflows, clust
 
         for sophistication_level in sophistication_levels:
             cdf_values = []
-            dfb_values = range(0, 100, 1)
+            dfb_values = [x/10.0 for x in range(0, 1000, 1)]
             for dfb_value in dfb_values:
                 cdf_values.append(100 * sum([x <= dfb_value for x in data_points[noise_level][sophistication_level]]) /
                                   len(data_points[noise_level][sophistication_level]))
@@ -75,5 +75,6 @@ if __name__ == "__main__":
     plot_path, result_dicts, workflows, clusters, best_algorithm_on_average = \
         importData(sys.argv[1], file_factor=1, verbosity=1)
 
-    platforms = clusters
+    # platforms = clusters
+    platforms = clusters[0:3]
     plot_simulator_sophistication_dfbs(plot_path, result_dicts, workflows, platforms)

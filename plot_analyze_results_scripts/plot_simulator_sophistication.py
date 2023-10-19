@@ -11,7 +11,7 @@ sys.path.append('../')
 from extract_scripts.pretty_dict import pretty_dict
 
 
-def plot_simulator_sophistication_dfbs(plot_path, results_dict, workflows, clusters):
+def plot_simulator_sophistication_dfbs(plot_path, plot_name, results_dict, workflows, clusters):
 
     sophistication_levels = ["no_contention_no_amdahl_noise", "no_contention_yes_amdahl_noise",
                              "yes_contention_no_amdahl_noise", "noise"]
@@ -35,7 +35,7 @@ def plot_simulator_sophistication_dfbs(plot_path, results_dict, workflows, clust
                         data_points[noise_level][sophistication_level].append(dfb)
 
     for noise_level in noise_levels:
-        output_filename = plot_path + "sophistication_noise_" + str(noise_level) + ".pdf"
+        output_filename = plot_path + "sophistication_noise_" + str(noise_level) + "_" + plot_name + ".pdf"
         f, ax1 = plt.subplots(1, 1, sharey=True, figsize=(12, 6))
         ax1.yaxis.grid()
 
@@ -61,6 +61,12 @@ def plot_simulator_sophistication_dfbs(plot_path, results_dict, workflows, clust
             ax1.plot(dfb_values, cdf_values, colors[sophistication_level] + "-",
                      linewidth=2, label=labels[sophistication_level])
 
+        plt.xticks(range(0,101,10))
+        plt.grid(which='both', linestyle=':')
+        plt.xlabel("% degradation from best (dfb)")
+        plt.ylabel("Fraction of experimental scenarios (%)")
+
+
         plt.legend()
         plt.savefig(output_filename)
         plt.close()
@@ -77,4 +83,7 @@ if __name__ == "__main__":
 
     # platforms = clusters
     platforms = clusters[0:3]
-    plot_simulator_sophistication_dfbs(plot_path, result_dicts, workflows, platforms)
+    plot_simulator_sophistication_dfbs(plot_path, "ALL", result_dicts, workflows, platforms)
+
+    for workflow in workflows:
+        plot_simulator_sophistication_dfbs(plot_path, workflow.split("-")[0], result_dicts, [workflow], platforms)

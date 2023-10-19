@@ -76,14 +76,14 @@ def main():
 	sys.stdout.write("\n# SOPHISTICATION PLOTS \n")
 	sys.stdout.write("########################\n")
 
-	plot_path, result_dicts, workflows, clusters, best_algorithm_on_average = \
-	importData(sys.argv[1], file_factor=1, verbosity=1)
+	# plot_path, result_dicts, workflows, clusters, best_algorithm_on_average = \
+	# importData(sys.argv[1], file_factor=1, verbosity=1)
 
 	platforms = clusters[0:3]
-	plot_simulator_sophistication_dfbs(plot_path, "ALL", result_dicts, workflows, clusters)
+	plot_simulator_sophistication.plot_simulator_sophistication_dfbs(plot_path, "ALL", result_dicts, workflows, clusters)
 
 	for workflow in workflows:
-		plot_simulator_sophistication_dfbs(plot_path, workflow.split("-")[0], result_dicts, [workflow], platforms)
+		plot_simulator_sophistication.plot_simulator_sophistication_dfbs(plot_path, workflow.split("-")[0], result_dicts, [workflow], platforms)
 
 # MAIN
 if __name__ == "__main__":

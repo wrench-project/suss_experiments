@@ -11,7 +11,7 @@ sys.path.append('../')
 from extract_scripts.pretty_dict import pretty_dict
 
 
-def plot_simulator_sophistication_dfbs(plot_path, plot_name, results_dict, workflows, clusters):
+def plot_simulator_sophistication_dfbs(plot_path, plot_name, result_dicts, workflows, clusters):
 
     sophistication_levels = ["no_contention_no_amdahl_noise", "no_contention_yes_amdahl_noise",
                              "yes_contention_no_amdahl_noise", "noise"]
@@ -28,8 +28,8 @@ def plot_simulator_sophistication_dfbs(plot_path, plot_name, results_dict, workf
             for workflow in workflows:
                 for cluster in clusters:
                     # print(f"{noise_level} {sophistication_level} {workflow} {cluster}")
-                    makespans = results_dict[sophistication_level][noise_level][noise_level][workflow][cluster]["us"]
-                    best_makespan = float(min(results_dict["basic_algorithms"][workflow][cluster].values()))
+                    makespans = result_dicts[sophistication_level][noise_level][noise_level][workflow][cluster]["us"]
+                    best_makespan = float(min(result_dicts["basic_algorithms"][workflow][cluster].values()))
                     for makespan in makespans:
                         dfb = dgfb(best_makespan, makespan)
                         data_points[noise_level][sophistication_level].append(dfb)
@@ -65,7 +65,6 @@ def plot_simulator_sophistication_dfbs(plot_path, plot_name, results_dict, workf
         plt.grid(which='both', linestyle=':')
         plt.xlabel("% degradation from best (dfb)")
         plt.ylabel("Fraction of experimental scenarios (%)")
-
 
         plt.legend()
         plt.savefig(output_filename)

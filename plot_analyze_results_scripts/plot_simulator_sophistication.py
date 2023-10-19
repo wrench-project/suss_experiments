@@ -10,6 +10,77 @@ import sys
 sys.path.append('../')
 from extract_scripts.pretty_dict import pretty_dict
 
+def plot_per_workflow_table(result_dicts, workflows, clusters):
+    sophistication_levels = ["noise", "no_contention_yes_amdahl_noise",
+                             "yes_contention_no_amdahl_noise", "no_contention_no_amdahl_noise"]
+
+    sophistication_levels_printed_row1 = {
+        "noise": r"contention $\checkmark$",
+        "yes_contention_no_amdahl_noise": r"contention $\checkmark$",
+        "no_contention_no_amdahl_noise": r"contention $\times$",
+        "no_contention_yes_amdahl_noise": r"contention $\times$",
+    }
+    sophistication_levels_printed_row2 = {
+        "noise": r"amdahl~~~~~$\checkmark$",
+        "yes_contention_no_amdahl_noise": r"amdahl~~~~~$\times$",
+        "no_contention_no_amdahl_noise": r"amdahl~~~~~$\times$",
+        "no_contention_yes_amdahl_noise": r"amdahl~~~~~$\checkmark$",
+    }
+
+    noise_level = 0.3
+    dfb_threshold = 10
+
+    # pretty_dict(results_dict)
+    data_points = {}
+    for workflow in workflows:
+        data_points[workflow] = {}
+        for sophistication_level in sophistication_levels:
+            data_points[workflow][sophistication_level] = []
+
+    for workflow in data_points:
+        for sophistication_level in sophistication_levels:
+            for cluster in clusters:
+                # print(f"{noise_level} {sophistication_level} {workflow} {cluster}")
+                makespans = result_dicts[sophistication_level][noise_level][noise_level][workflow][cluster]["us"]
+                best_makespan = float(min(result_dicts["basic_algorithms"][workflow][cluster].values()))
+                for makespan in makespans:
+                    dfb = dgfb(best_makespan, makespan)
+                    data_points[workflow][sophistication_level].append(dfb)
+
+    print(r"\begin{table}")
+    print(r"\scriptsize")
+    print(r"\caption{XXX}")
+    print(r"\begin{center}")
+    print(r"\begin{tabular}{l|c|c|c|c}")
+    print(r"\toprule")
+    sys.stdout.write(" ")
+    for sophistication_level in sophistication_levels:
+        sys.stdout.write("& " + sophistication_levels_printed_row1[sophistication_level])
+    print(r"\\")
+    sys.stdout.write(" Workflow ")
+    for sophistication_level in sophistication_levels:
+        sys.stdout.write("& " + sophistication_levels_printed_row2[sophistication_level])
+    print(r"\\")
+    print(r"\midrule")
+    flip = 0
+    for workflow in workflows:
+        flip = 1 - flip
+        if flip == 0:
+            print(r"\rowcolor{Gray}")
+
+        workflow_shortname = workflow.split("-")[0]
+        if workflow_shortname == "1000genome":
+            workflow_shortname = "genome"
+        sys.stdout.write("$W_{\\" + workflow_shortname + "}$")
+        for sophistication_level in sophistication_levels:
+            value = 100 * sum([x <= dfb_threshold for x in data_points[workflow][sophistication_level]]) / len(data_points[workflow][sophistication_level])
+            sys.stdout.write(" & " + "{:0.2f}".format(value))
+        print(r"\\")
+    print(r"\bottomrule")
+    print(r"\end{tabular}")
+    print(r"\end{center}")
+    print(r"\end{table}")
+
 
 def plot_simulator_sophistication_dfbs(plot_path, plot_name, result_dicts, workflows, clusters):
 
@@ -82,7 +153,11 @@ if __name__ == "__main__":
 
     # platforms = clusters
     platforms = clusters[0:3]
+
+    plot_per_workflow_table(result_dicts, workflows, platforms)
+
     plot_simulator_sophistication_dfbs(plot_path, "ALL", result_dicts, workflows, platforms)
 
     for workflow in workflows:
         plot_simulator_sophistication_dfbs(plot_path, workflow.split("-")[0], result_dicts, [workflow], platforms)
+

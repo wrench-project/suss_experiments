@@ -14,20 +14,17 @@ def plot_per_workflow_table(result_dicts, workflows, clusters):
     sophistication_levels = ["noise", "no_contention_yes_amdahl_noise",
                              "yes_contention_no_amdahl_noise", "no_contention_no_amdahl_noise"]
 
-    sophistication_levels_printed_row1 = {
-        "noise": r"contention $\checkmark$",
-        "yes_contention_no_amdahl_noise": r"contention $\checkmark$",
-        "no_contention_no_amdahl_noise": r"contention $\times$",
-        "no_contention_yes_amdahl_noise": r"contention $\times$",
-    }
+
     sophistication_levels_printed_row2 = {
-        "noise": r"amdahl~~~~~$\checkmark$",
-        "yes_contention_no_amdahl_noise": r"amdahl~~~~~$\times$",
-        "no_contention_no_amdahl_noise": r"amdahl~~~~~$\times$",
-        "no_contention_yes_amdahl_noise": r"amdahl~~~~~$\checkmark$",
+        "noise": r"\CA",
+        "yes_contention_no_amdahl_noise": r"\Ca",
+        "no_contention_no_amdahl_noise": r"\ca",
+        "no_contention_yes_amdahl_noise": r"\cA",
     }
 
-    noise_level = 0.3
+
+
+    noise_level = 0.0
     dfb_threshold = 10
 
     # pretty_dict(results_dict)
@@ -54,9 +51,6 @@ def plot_per_workflow_table(result_dicts, workflows, clusters):
     print(r"\begin{tabular}{l|c|c|c|c}")
     print(r"\toprule")
     sys.stdout.write(" ")
-    for sophistication_level in sophistication_levels:
-        sys.stdout.write("& " + sophistication_levels_printed_row1[sophistication_level])
-    print(r"\\")
     sys.stdout.write(" Workflow ")
     for sophistication_level in sophistication_levels:
         sys.stdout.write("& " + sophistication_levels_printed_row2[sophistication_level])
@@ -84,8 +78,11 @@ def plot_per_workflow_table(result_dicts, workflows, clusters):
 
 def plot_simulator_sophistication_dfbs(plot_path, plot_name, result_dicts, workflows, clusters):
 
-    sophistication_levels = ["no_contention_no_amdahl_noise", "no_contention_yes_amdahl_noise",
-                             "yes_contention_no_amdahl_noise", "noise"]
+    sophistication_levels = ["noise", "no_contention_yes_amdahl_noise", "yes_contention_no_amdahl_noise",
+                             "no_contention_no_amdahl_noise"]
+
+
+
     noise_levels = result_dicts[sophistication_levels[0]].keys()
     # pretty_dict(results_dict)
     data_points = {}
@@ -105,22 +102,31 @@ def plot_simulator_sophistication_dfbs(plot_path, plot_name, result_dicts, workf
                         dfb = dgfb(best_makespan, makespan)
                         data_points[noise_level][sophistication_level].append(dfb)
 
+    fontsize = 12
+
     for noise_level in noise_levels:
         output_filename = plot_path + "sophistication_noise_" + str(noise_level) + "_" + plot_name + ".pdf"
-        f, ax1 = plt.subplots(1, 1, sharey=True, figsize=(12, 6))
+        f, ax1 = plt.subplots(1, 1, sharey=True, figsize=(6, 6))
         ax1.yaxis.grid()
 
         colors = {
             "no_contention_no_amdahl_noise": "r",
-            "no_contention_yes_amdahl_noise": "b",
-            "yes_contention_no_amdahl_noise": "g",
+            "no_contention_yes_amdahl_noise": "g",
+            "yes_contention_no_amdahl_noise": "b",
             "noise": "k"}
 
+        zorders = {
+            "noise": 3,
+            "yes_contention_no_amdahl_noise": 2,
+            "no_contention_no_amdahl_noise": 1,
+            "no_contention_yes_amdahl_noise": 0,
+        }
+
         labels = {
-            "no_contention_no_amdahl_noise": "no-contention / no-amdahl",
-            "no_contention_yes_amdahl_noise": "no-contention / amdahl",
-            "yes_contention_no_amdahl_noise": "contention / no-amdahl",
-            "noise": "contention / amdahl"}
+            "no_contention_no_amdahl_noise": r"$\bar{C}\bar{A}$",
+            "no_contention_yes_amdahl_noise": r"$\bar{C}A$",
+            "yes_contention_no_amdahl_noise": r"$C\bar{A}$",
+            "noise": "$CA$"}
 
         for sophistication_level in sophistication_levels:
             cdf_values = []
@@ -130,14 +136,16 @@ def plot_simulator_sophistication_dfbs(plot_path, plot_name, result_dicts, workf
                                   len(data_points[noise_level][sophistication_level]))
 
             ax1.plot(dfb_values, cdf_values, colors[sophistication_level] + "-",
-                     linewidth=2, label=labels[sophistication_level])
+                     linewidth=2, label=labels[sophistication_level], zorder=zorders[sophistication_level])
 
-        plt.xticks(range(0,101,10))
+        plt.xticks(range(0,101,10), fontsize=fontsize+2)
+        plt.yticks(fontsize=fontsize+2)
         plt.grid(which='both', linestyle=':')
-        plt.xlabel("% degradation from best (dfb)")
-        plt.ylabel("Fraction of experimental scenarios (%)")
+        plt.xlabel("% degradation from best (dfb)", fontsize=fontsize+2)
+        plt.ylabel("Fraction of experimental scenarios (%)", fontsize=fontsize+2)
+        plt.ylim([20, 102])
 
-        plt.legend()
+        plt.legend(fontsize=fontsize+2)
         plt.savefig(output_filename)
         plt.close()
         sys.stdout.write("Generated plot '" + output_filename + "'\n")
